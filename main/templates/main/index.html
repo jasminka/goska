@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="si">
+<head>
+    <title>Kam</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{% static 'main/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'main/chosen/chosen.css' %}" rel="stylesheet">
+    <link href="{% static 'main/css/style.css' %}" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="container theme-showcase">
+
+    <div class="jumbotron">
+        <h1>Živjo!</h1>
+
+        <p>Te zanima v kako raznoliki državi živiš? Si se kdaj spraševal, v čem se tvoje domače okolje razlikuje od
+            drugih delov Slovenije?
+            Izberi dve občini in začni raziskovati!</p>
+
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <img src="{% static 'main/img/obcine.jpg' %}" class="img-responsive center-block" id="prj"
+                 alt="Razdelitev Slovenije na občine">
+        </div>
+    </div>
+
+    <div class="row spacer50">
+        <div class="col-md-12 text-center">
+            <form class="form-inline center-block" role="form">
+                <div class="form-group">
+                    <select id="select-1" data-placeholder="Občina I" style="width:200px;"
+                            class="form-control chosen-select">
+                        <option value=""></option>
+                        {% for obcina in obcine %}
+                            <option value="{{ obcina.id }}">{{ obcina.ime }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select id="select-2" data-placeholder="Občina II" style="width:200px;"
+                            class="form-control chosen-select">
+                        <option value=""></option>
+                        {% for obcina in obcine %}
+                            <option value="{{ obcina.id }}">{{ obcina.ime }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button id=btnsum type="button" class="btn btn-warning" data-loading-text="Računam..." style="width: 100px;">Primerjaj</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="panel-group spacer50" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a id="sum" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+
+                    </a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse">
+                <div id="kazalniki" class="panel-body">
+                    <ul>
+                        <li>Družbenogeografski kazalniki</li>
+                        <ul>
+                            <li>Gostota</li>
+                            <li>Brezposelnost</li>
+                            <li>Indeks delovne migracije</li>
+                            <li>Povprečna plača</li>
+                        </ul>
+                        <li>Fizičnogeografski kazalniki</li>
+                        <ul>
+                            <li>Nadmorska višina</li>
+                            <li>Naklon</li>
+                            <li>Padavine</li>
+                            <li>Temperatura</li>
+                            <li>Prst</li>
+                            <li>Kamnine</li>
+                            <li>Reke</li>
+                            <li>Rastje</li>
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div id="opis" class="panel-body">
+               Opis
+            </div>
+        </div>
+    </div>
+    <div id="wrap">
+        <div id="main" class="container clear-top">
+            <p> Jasmina Kregar / 2013 / Oddelek za geografijo</p>
+        </div>
+    </div>
+    <footer class="footer"></footer>
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="{% static 'main/js/jquery.js' %}"></script>
+<script src="{% static 'main/chosen/chosen.jquery.js' %}"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="{% static 'main/js/bootstrap.min.js' %}"></script>
+<script>
+    $(".chosen-select").chosen({no_results_text: "Oops, nothing found!"});
+
+    $(document).ready(function () {
+        var img = $("#prj"),
+                last = 0;
+
+        img.click(function (e) {
+            var offset = $(this).offset();
+            var ix = e.pageX - offset.left,
+                    iy = e.pageY - offset.top,
+                    iwidth = img.width(),
+                    iheight = img.height(),
+                    xMin = 375209.19,
+                    yMin = 30853.2,
+                    xMax = 624065.31,
+                    yMax = 193270.41;
+
+            var x = ix / iwidth * (xMax - xMin) + xMin;
+            var y = (yMax) - iy / iheight * (yMax - yMin);
+
+            //$("#sum").html("ix/iy: " + ix + "/" + iy + " x/y: " + x + "/" + y)
+
+            $.get("/coor/?x=" + x + "&y=" + y, function (data) {
+                var select_id = (last === 0) ? '#select-1' : '#select-2';
+                last = (last + 1) % 2;
+
+                $(select_id + ' option[value="' + data.id + '"]').attr('selected', 'selected');
+                $(select_id).chosen().change();
+                $(select_id).trigger("chosen:updated");
+            });
+        });
+        var btnsum = $("#btnsum");
+        btnsum.click(function () {
+            btnsum.button('loading');
+            $.get("/compare/?o1=" + $('#select-1').val() + "&o2=" + $('#select-2').val(), function (data) {
+                $("#sum").html(data.povzetek);
+                $("#kazalniki").html(data.kazalniki);
+                $("#opis").html(data.opis);
+            }).always(function() {
+                btnsum.button('reset');
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>
