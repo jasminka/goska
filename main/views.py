@@ -18,7 +18,7 @@ def obcina(request):
         y = float(request.GET['y'])
         id, ime = deltalife.katera_obcina(x, y)
         print id, ime
-        return HttpResponse(json.dumps({'id': id, 'ime': ime}), content_type="application/json")
+        return HttpResponse(json.dumps({'id': int(id), 'ime': ime}), content_type="application/json")
     else:
         raise Http404
 
@@ -26,7 +26,7 @@ def prim(request):
     if 'o1' in request.GET and 'o2' in request.GET:
         o1 = int(request.GET['o1'])
         o2 = int(request.GET['o2'])
-        povzetek, opis, kazalniki = deltalife.razlike(o1, o2)
+        povzetek, opis, kazalniki = deltalife.opis(o1, o2)
         return HttpResponse(json.dumps({
             'povzetek' : povzetek,
             'opis' : opis,

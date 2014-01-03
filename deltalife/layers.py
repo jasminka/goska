@@ -7,7 +7,7 @@ import PyQt4.QtCore
 
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 VECTOR_LAYERS = {
-    "OBCINE": os.path.join(PATH, "..", "..", "data", "obcine_prave", "Obcine.shp"),
+    "OBCINE": os.path.join(PATH, "..", "..", "data", "obcine", "Obcine.shp"),
 }
 
 print VECTOR_LAYERS
@@ -101,7 +101,7 @@ class DLife(object):
             return val.toPyObject()
 
     def get_attr_dict(self, feat):
-        # Funkcija vrne slover atributov za izbrano obcino. Ključ je ime stolpca.
+        # Funkcija vrne slover atributov za obcine. Kljuc je ime stolpca.
         dict = self.provider.fieldNameMap()
         return dict
 
