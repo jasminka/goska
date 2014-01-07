@@ -6,8 +6,12 @@ import PyQt4.QtCore
 
 
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+QGIS_DATA = os.path.join(PATH, "..", "..", "data", "obcine")
+if 'QGIS_DATA' in os.environ:
+    QGIS_DATA = os.environ['QGIS_DATA']
+
 VECTOR_LAYERS = {
-    "OBCINE": os.path.join(PATH, "..", "..", "data", "obcine", "Obcine.shp"),
+    "OBCINE": os.path.join(QGIS_DATA, "Obcine.shp"),
 }
 
 print VECTOR_LAYERS
