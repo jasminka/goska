@@ -12,7 +12,11 @@ VECTOR_LAYERS = {
 
 print VECTOR_LAYERS
 
-qc.QgsApplication.setPrefixPath(r"C:\Program Files (x86)\Quantum GIS Lisboa\apps\qgis", True)
+QGIS_PREFIX = r"C:\Program Files (x86)\Quantum GIS Lisboa\apps\qgis"
+if 'QGIS_PREFIX' in os.environ:
+    QGIS_PREFIX = os.environ['QGIS_PREFIX']
+
+qc.QgsApplication.setPrefixPath(QGIS_PREFIX, True)
 qc.QgsApplication.initQgis()
 
 

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from operator import itemgetter, attrgetter
+import random
+import time
 import numpy as np
 import scipy as sp
-from scipy import stats
-import PyQt4
-import random
+from operator import itemgetter, attrgetter
+
 import layers
-import time
+
 
 life = layers.DLife()
 layer_data = None
