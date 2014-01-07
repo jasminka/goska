@@ -1,11 +1,11 @@
 from settings import *
 
-DEBUG = False
+DEBUG = 1#False
 TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'goska',
         'USER': 'miha02',
         'PASSWORD': 'BD6ET3vnyK3YeYvP',

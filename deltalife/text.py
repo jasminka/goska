@@ -273,7 +273,7 @@ def get_layer_data(layer_name='OBCINE'):
     imena_atributov = []
     for feat in life.features(layer_name): # Gre cez vse featurje (obcine) na sloju
         attr_vals = feat.attributeMap() # key = field index, value = QgsFeatureAttribute
-        attr_names = {val: key for key, val in life.get_attr_dict(feat).iteritems()}
+        attr_names = dict((val, key) for key, val in life.get_attr_dict(feat).iteritems())
         vals = []
         columns = sorted(attr_names.iterkeys())[2:]
 
@@ -443,8 +443,8 @@ def normal_razl(atr, id1, id2):
 def skupna_razlika(id1, id2):
     dic_razl = {}
     dic = {
-        u'družbene_značilnosti' : {'PRIRAST', 'DEL_TUJC', 'GOSTOTA', 'INDX_DELOV', 'URA_BRUTO', 'STOP_BREZP'},
-        u'naravne_značilnosti': {'TEMP', 'PADA', 'NAKLON', 'VISINA', 'REKA2'},
+        u'družbene_značilnosti' : ('PRIRAST', 'DEL_TUJC', 'GOSTOTA', 'INDX_DELOV', 'URA_BRUTO', 'STOP_BREZP'),
+        u'naravne_značilnosti': ('TEMP', 'PADA', 'NAKLON', 'VISINA', 'REKA2'),
     }
     m = 0
     max_spremenlj = ''
@@ -569,6 +569,6 @@ def vse_razlike(limit=None):
     if not limit:
         limit = len(id)
 
-    return {(id[i], id[j]): skupna_razlika(id[i], id[j])[0] for i in range(len(id))[:limit] for j in range(i)}
+    return dict(((id[i], id[j]), skupna_razlika(id[i], id[j])[0]) for i in range(len(id))[:limit] for j in range(i))
 
 
