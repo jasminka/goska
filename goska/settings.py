@@ -1,5 +1,5 @@
 """
-Django settings for gobcn project.
+Django settings for goska project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
@@ -48,9 +48,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'gobcn.urls'
+ROOT_URLCONF = 'goska.urls'
 
-WSGI_APPLICATION = 'gobcn.wsgi.application'
+WSGI_APPLICATION = 'goska.wsgi.application'
 
 
 # Database
