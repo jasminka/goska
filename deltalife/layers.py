@@ -1,18 +1,29 @@
 # -*- coding: utf-8 -*-
 import os
 
-import qgis.core as qc
 import PyQt4.QtCore
+import qgis.core as qc
 
-
+ENCODING = u'windows-1250'
 PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+QGIS_DATA = os.path.join(PATH, "..", "..", "data", "obcine")
+if 'QGIS_DATA' in os.environ:
+    QGIS_DATA = os.environ['QGIS_DATA']
+
 VECTOR_LAYERS = {
-    "OBCINE": os.path.join(PATH, "..", "..", "data", "obcine", "Obcine.shp"),
+    "OBCINE": os.path.join(QGIS_DATA, "Obcine.shp"),
 }
 
-print VECTOR_LAYERS
+QGIS_PREFIX = r"C:\Program Files (x86)\Quantum GIS Lisboa\apps\qgis"
+if 'QGIS_PREFIX' in os.environ:
+    QGIS_PREFIX = os.environ['QGIS_PREFIX']
 
-qc.QgsApplication.setPrefixPath(r"C:\Program Files (x86)\Quantum GIS Lisboa\apps\qgis", True)
+if 'QGIS_PLUGINS' in os.environ:
+    for f in os.listdir(os.environ['QGIS_PLUGINS']):
+        PyQt4.QtCore.QLibrary(os.path.join(os.environ['QGIS_PLUGINS'], f)).load()
+
+print 'QGIS_PREFIX:', QGIS_PREFIX
+qc.QgsApplication.setPrefixPath(QGIS_PREFIX, True)
 qc.QgsApplication.initQgis()
 
 
@@ -48,7 +59,7 @@ def get_attributes(feat):
 
     for key, val in attrs.iteritems(): # zanka, ki gre čez ključe in vrednosti slovarja
         if val.type() == PyQt4.QtCore.QVariant.String:
-            vals.append(unicode(val.toPyObject(), 'windows-1250'))
+            vals.append(unicode(val.toPyObject(), ENCODING))
         else:
             vals.append(val.toPyObject())
 
@@ -63,8 +74,14 @@ class DLife(object):
     def get_layer(self, layer_name):
         # Ustvari vektorski qg objekt "layer" in spatial index. Doda ju v slovar "layers"
         if not layer_name in self.layers:
+            print 'Loading:', VECTOR_LAYERS[layer_name]
             layer = qc.QgsVectorLayer(VECTOR_LAYERS[layer_name], layer_name, "ogr")
-            layer.setProviderEncoding('windows-1250')
+            print 'Is valid:', layer.isValid()
+            print layer.dataProvider().encoding()
+
+            #layer.setProviderEncoding(ENCODING)
+            #layer.dataProvider().setEncoding(ENCODING)
+            print layer.dataProvider().encoding()
             self.provider = layer.dataProvider()
             allAttrs = self.provider.attributeIndexes()
             self.provider.select(allAttrs)
@@ -96,7 +113,7 @@ class DLife(object):
         val = feat.attributeMap()[ndx]
 
         if val.type() == PyQt4.QtCore.QVariant.String:
-            return unicode(val.toPyObject(), 'windows-1250')
+            return unicode(val.toPyObject(), ENCODING)
         else:
             return val.toPyObject()
 

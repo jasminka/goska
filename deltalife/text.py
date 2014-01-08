@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from operator import itemgetter, attrgetter
+import random
+import time
 import numpy as np
 import scipy as sp
-from scipy import stats
-import PyQt4
-import random
+from operator import itemgetter, attrgetter
+
 import layers
-import time
+
 
 life = layers.DLife()
 layer_data = None
@@ -273,7 +273,7 @@ def get_layer_data(layer_name='OBCINE'):
     imena_atributov = []
     for feat in life.features(layer_name): # Gre cez vse featurje (obcine) na sloju
         attr_vals = feat.attributeMap() # key = field index, value = QgsFeatureAttribute
-        attr_names = {val: key for key, val in life.get_attr_dict(feat).iteritems()}
+        attr_names = dict((val, key) for key, val in life.get_attr_dict(feat).iteritems())
         vals = []
         columns = sorted(attr_names.iterkeys())[2:]
 
@@ -286,10 +286,10 @@ def get_layer_data(layer_name='OBCINE'):
                 try:
                     vals.append(float(val.toPyObject()))
                 except:
-                    vals.append(unicode(val.toPyObject(), 'windows-1250'))
+                    vals.append(unicode(val.toPyObject(), layers.ENCODING))
 
-        imena_obcin.append(unicode(attr_vals[1].toPyObject(), 'windows-1250'))
-        id.append(int(unicode(attr_vals[0].toPyObject(), 'windows-1250')))
+        imena_obcin.append(unicode(attr_vals[1].toPyObject(), layers.ENCODING))
+        id.append(int(unicode(attr_vals[0].toPyObject(), layers.ENCODING)))
         vrednosti.append(vals)
 
     for col in columns:
@@ -445,8 +445,8 @@ print 'brez', normal_razl('URA_BRUTO', 70, 56)
 def skupna_razlika(id1, id2):
     dic_razl = {}
     dic = {
-        u'družbene_značilnosti' : {'PRIRAST', 'DEL_TUJC', 'GOSTOTA', 'INDX_DELOV', 'URA_BRUTO', 'STOP_BREZP'},
-        u'naravne_značilnosti': {'TEMP', 'PADA', 'NAKLON', 'VISINA', 'REKA2'},
+        u'družbene_značilnosti' : ('PRIRAST', 'DEL_TUJC', 'GOSTOTA', 'INDX_DELOV', 'URA_BRUTO', 'STOP_BREZP'),
+        u'naravne_značilnosti': ('TEMP', 'PADA', 'NAKLON', 'VISINA', 'REKA2'),
     }
     m = 0
     max_spremenlj = ''
@@ -546,23 +546,23 @@ def opis(id1, id2):
                     break
             #print attribute, raz,'v', v1, v2
             opis += template.format(o1=o1, o2=o2, feature=feature, v1=v1[0]) \
-                    #+ '[{}] '.format(raz)
+                    #+ '[{0}] '.format(raz)
     print 'maax', max_spremenlj
 
     skloni = {u"družbene značilnosti": u"družbenih značilnosti", u"naravne značilnosti": u"naravnih značilnosti" }
     if max(dic_skup.itervalues()) - min(dic_skup.itervalues()) > 10:
         vec_razl, _ = max(dic_skup.iteritems(), key=itemgetter(1))
         vec_razl = vec_razl.replace("_", " ",).strip()
-        vec_razl = u"Največ razlik je na področju {}. ".format(skloni[vec_razl])
+        vec_razl = u"Največ razlik je na področju {0}. ".format(skloni[vec_razl])
     else:
         vec_razl = u"Stopnja razlikovanja na naravnogeografskem in družbenogeografskem področju je približno enaka. "
 
     if max_spremenlj in IMENA:
-        max_spremenlj = u"Najbolj se razlikujeta v spremenljivki {}. ".format(IMENA[max_spremenlj].lower())
+        max_spremenlj = u"Najbolj se razlikujeta v spremenljivki {0}. ".format(IMENA[max_spremenlj].lower())
     else:
         max_spremenlj = ""
 
-    povzetek = u"{} {}".format(pretvori(vsota), vec_razl)
+    povzetek = u"{0} {1}".format(pretvori(vsota), vec_razl)
     return povzetek, opis, k2
 
 def vse_razlike(limit=None):
@@ -571,6 +571,6 @@ def vse_razlike(limit=None):
     if not limit:
         limit = len(id)
 
-    return {(id[i], id[j]): skupna_razlika(id[i], id[j])[0] for i in range(len(id))[:limit] for j in range(i)}
+    return dict(((id[i], id[j]), skupna_razlika(id[i], id[j])[0]) for i in range(len(id))[:limit] for j in range(i))
 
 
