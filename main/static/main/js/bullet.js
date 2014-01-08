@@ -107,7 +107,9 @@
                     .attr("y2", height * 5 / 6);
 
                 // Compute the tick format.
-                var format = tickFormat || x1.tickFormat(8);
+                var format = function(n) {
+                    return x1.tickFormat(8)(d.real[n])
+                };
 
                 // Update the tick groups.
                 var tick = g.selectAll("g.tick")
@@ -156,6 +158,23 @@
                     .attr("transform", bulletTranslate(x1))
                     .style("opacity", 1e-6)
                     .remove();
+
+                var o1 = g.selectAll("text.o1")
+                    .data(d.o);
+
+                o1.enter().append("text")
+                    .attr("class", "o1")
+                    //.attr("transform", bulletTranslateValue(x0))
+                    .attr("text-anchor", function(x) {
+                        if (x.value == Math.min(d.o[0].value, d.o[1].value)) {
+                            return "end";
+                        } else {
+                            return "start";
+                        }
+                    })
+                    .attr("x", function(d) {return x1(d.value);})
+                    .text(function(d) {return d.name;});
+
             });
             d3.timer.flush();
         }
@@ -231,6 +250,12 @@
     function bulletTranslate(x) {
         return function (d) {
             return "translate(" + x(d) + ",0)";
+        };
+    }
+
+    function bulletTranslateValue(x) {
+        return function (d) {
+            return "translate(" + x(d.value) + ",0)";
         };
     }
 

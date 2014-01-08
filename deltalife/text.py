@@ -442,6 +442,7 @@ def normal_razl(atr, id1, id2):
     #print vi1, vi2
     return vi1, vi2, abs(vi1 - vi2)
 print 'brez', normal_razl('URA_BRUTO', 70, 56)
+
 def skupna_razlika(id1, id2):
     dic_razl = {}
     dic = {
@@ -516,12 +517,19 @@ def opis(id1, id2):
             'mean': 30,
         });
         for k, v in val.iteritems():
+            minval, maxval = min_max_obcini(k)
             items.append({
                 'attribute': IMENA[k].lower(),
                 'value': v,
                 'o1': normal_razl_meje(k, id1, id2)[0],
+                'o1_real': vrednost_atributa(id1, k)[0],
+                'o1_name': id_ime(id1),
                 'o2': normal_razl_meje(k, id1, id2)[1],
+                'o2_real': vrednost_atributa(id2, k)[0],
+                'o2_name': id_ime(id2),
                 'mean': attr_mean(k),
+                'min': minval,
+                'max': maxval,
             })
         items.sort(key=itemgetter('value'), reverse=True)
     k2.sort(key=itemgetter('value'), reverse=True)
@@ -574,3 +582,14 @@ def vse_razlike(limit=None):
     return dict(((id[i], id[j]), skupna_razlika(id[i], id[j])[0]) for i in range(len(id))[:limit] for j in range(i))
 
 
+def min_max_obcini(atr):
+    t = vrednost_atributa_vse_obcine_tup(atr)
+    minimum = t[0][1]
+    maximum = t[0][1]
+    for id, v in t:
+        if v >= MEJE[atr][0] and v < minimum:
+            minimum = v
+    for id, v in t:
+        if v <= MEJE[atr][1] and v > maximum:
+            maximum = v
+    return minimum, maximum

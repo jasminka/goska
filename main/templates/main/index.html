@@ -75,21 +75,21 @@
             <div id="collapseOne" class="panel-collapse collapse">
 
             </div>
-                <div id="kazalniki" class="panel-body"></div>
-                <div id="chart" class="panel-body" style="text-align: center"></div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div id="opis" class="panel-body">
-            </div>
+            <div id="kazalniki" class="panel-body"></div>
+            <div id="chart" class="panel-body" style="text-align: center"></div>
         </div>
     </div>
-    <div id="wrap">
-        <div id="main" class="container clear-top">
-            <p> Jasmina Kregar / 2013 / Oddelek za geografijo</p>
+    <div class="panel panel-default">
+        <div id="opis" class="panel-body">
         </div>
     </div>
-    <footer class="footer"></footer>
+</div>
+<div id="wrap">
+    <div id="main" class="container clear-top">
+        <p> Jasmina Kregar / 2013 / Oddelek za geografijo</p>
+    </div>
+</div>
+<footer class="footer"></footer>
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -100,109 +100,6 @@
 <script src="{% static 'main/js/d3.v3.min.js' %}"></script>
 <script src="{% static 'main/js/radar-chart.js' %}"></script>
 <script src="{% static 'main/js/bullet.js' %}"></script>
-<script>
-    String.prototype.format = function () {
-        var args = arguments;
-        return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
-            if (m == "{{ ") { return "{"; }
-        if (m == "}}") { return "}"; }
-        return args[n];
-        });
-        };
-
-        $(".chosen-select").chosen({no_results_text: "Oops, nothing found!"});
-
-        $(document).ready(function () {
-        var img = $("#prj"),
-        last = 0;
-
-        img.click(function (e) {
-        var offset = $(this).offset();
-        var ix = e.pageX - offset.left,
-        iy = e.pageY - offset.top,
-        iwidth = img.width(),
-        iheight = img.height(),
-        xMin = 375209.19,
-        yMin = 30853.2,
-        xMax = 624065.31,
-        yMax = 193270.41;
-
-        var x = ix / iwidth * (xMax - xMin) + xMin;
-        var y = (yMax) - iy / iheight * (yMax - yMin);
-
-        //$("#sum").html("ix/iy: " + ix + "/" + iy + " x/y: " + x + "/" + y)
-
-        $.get("/coor/?x=" + x + "&y=" + y, function (data) {
-        var select_id = (last === 0) ? '#select-1' : '#select-2';
-        last = (last + 1) % 2;
-
-        $(select_id + ' option[value="' + data.id + '"]').attr('selected', 'selected');
-        $(select_id).chosen().change();
-        $(select_id).trigger("chosen:updated");
-        });
-        });
-        var btnsum = $("#btnsum");
-        btnsum.click(function () {
-        btnsum.button('loading');
-        $.get("/compare/?o1=" + $('#select-1').val() + "&o2=" + $('#select-2').val(), function (data) {
-        $("#sum").html(data.povzetek);
-        $("#opis").html(data.opis);
-
-        var kazalniki = "",
-        d = [[]],
-        counter = 0;
-
-        $.each(data.kazalniki, function(index, value) {
-        kazalniki += "<div class=\"row\">";
-        kazalniki += "<div class=\"col-md-4\"><strong>{0}</strong></div>".format(value['group'])
-        kazalniki += "<div id=\"chart_{0}\" class=\"col-md-6\"></div>".format(counter);
-        kazalniki += "<div class=\"col-md-2 text-right\"><strong>{0}</strong> %</div><br/><br/>".format(Math.round(value['value']));
-        kazalniki += "</div>";
-        counter += 1;
-
-        $.each(value.attributes, function(index, value) {
-        kazalniki += "<div class=\"row\">";
-        kazalniki += "<div class=\"col-md-4\">{0}</div>".format(value['attribute']);
-        kazalniki += "<div id=\"chart_{0}\" class=\"col-md-6\"></div>".format(counter);
-        kazalniki += "<div class=\"col-md-2 text-right\">{0} %</div>".format(Math.round(value['value']));
-        kazalniki += "</div>";
-        d[0].push({axis: value['attribute'], value: value['value']});
-        counter += 1;
-        });
-        });
-
-        $("#kazalniki").html(kazalniki);
-        RadarChart.draw("#chart", d);
-
-        counter = 0;
-        $.each(data.kazalniki, function(index, value) {
-        counter += 1;
-        $.each(value.attributes, function(index, value) {
-        var margin = {top: 15, right: 40, bottom: 15, left: 20},
-        width = 500 - margin.left - margin.right,
-        height = 47 - margin.top - margin.bottom;
-        var chart = d3.bullet()
-        .width(width)
-        .height(height);
-        var svg = d3.select("#chart_" + counter).selectAll("svg")
-        .data([{"title":"Razlike med občinama po kazalnikih","subtitle":"v %","ranges":[value['o1'],value['o2'],100],"measures":[0,0],"markers":[value['mean']]}])
-        .enter().append("svg")
-        .attr("class", "bullet")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-        .call(chart);
-        counter += 1;
-        });
-        });
-
-        }).always(function() {
-        btnsum.button('reset');
-        });
-        return false;
-        });
-        });
-        </script>
-        </body>
-        </html>
+<script src="{% static 'main/js/main.js' %}"></script>
+</body>
+</html>
