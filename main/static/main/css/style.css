@@ -1,9 +1,37 @@
 .spacer50 {
-    margin-top: 50px;
+    margin-top: 30px;
+
 }
 
 html, body {
   height: 100%;
+}
+
+.radio {
+    display: inline;
+    color: #808080;
+
+
+
+}
+#r1 {
+  float: left;
+  margin: 2px 10px;
+  display: inline;
+  padding-right: 15px;
+  padding-top: 30px;
+}
+
+#collapseOne {
+    padding-top: -80px;
+}
+
+#r2 {
+  float: left;
+  margin: 2px 10px;
+  display: inline;
+  padding-right: 15px;
+  padding-top: 30px;
 }
 
 #wrap {
@@ -17,6 +45,7 @@ html, body {
   text-align: center;
 }
 
+
 .footer {
   position: relative;
   margin-top: -150px; /* negative value of footer height */
@@ -27,10 +56,6 @@ html, body {
 
 .jumbotron, .panel-default>.panel-heading {
     background-color: #fafafa
-}
-
-#kazalniki {
-
 }
 
 
@@ -45,5 +70,6 @@ html, body {
 .bullet .measure.s1 { fill: steelblue; }
 .bullet .title { font-size: 14px; font-weight: bold; }
 .bullet .subtitle { fill: #999; }
+
 
 

@@ -14,7 +14,7 @@ IMENA = {'GOSTOTA': u'GOSTOTA POSELITVE',
          'PRIRAST': u'SKUPNI PRIRAST',
          'PADA': u'POVPREČNA LETNA KOLIČINA PADAVIN',
          'REG_BREZPO': u'REGISTRIRANA BREZPOSELNOST',
-         'URA_BRUTO': u'BRUTO PLAČILO ZA URA DELA',
+         'URA_BRUTO': u'BRUTO PLAČILO ZA URO DELA',
          'STOP_BREZP': u'STOPNJA BREZPOSELNOSTI',
          'NAKLON': u'POVPREČEN NAKLON',
          'DEL_TUJC': u'DELEŽ TUJCEV',
@@ -76,7 +76,7 @@ OPIS = [
         'features': {
             (-1000, -30): u"precej manjši",
             (-30, -10): u"nekoliko manjši",
-            (-10, 10): u"približno enak v obeh občinah ",
+            (-10, 10): u"približno enak",
             (10, 30): u"nekoliko večji",
             (30, 1000): u"precej večji",
         },
@@ -428,6 +428,8 @@ def normal_razl_meje(atr, id1, id2):
         vi2 = (v2 - v_min)/(v_max - v_min) * (100-0) + 0
     #print vi1, vi2
     return vi1, vi2, abs(vi1 - vi2)
+print normal_razl_meje('URA_BRUTO',70, 56)
+
 
 def normal_razl(atr, id1, id2):
     v1, _, _ = vrednost_atributa(id1, atr)
@@ -439,7 +441,7 @@ def normal_razl(atr, id1, id2):
     vi2 = (v2 - v_min)/(v_max - v_min) * (100-0) + 0
     #print vi1, vi2
     return vi1, vi2, abs(vi1 - vi2)
-
+print 'brez', normal_razl('URA_BRUTO', 70, 56)
 def skupna_razlika(id1, id2):
     dic_razl = {}
     dic = {
