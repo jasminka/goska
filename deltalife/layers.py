@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import platform
 
 import PyQt4.QtCore
 import qgis.core as qc
@@ -78,9 +79,9 @@ class DLife(object):
             layer = qc.QgsVectorLayer(VECTOR_LAYERS[layer_name], layer_name, "ogr")
             print 'Is valid:', layer.isValid()
             print layer.dataProvider().encoding()
-
-            #layer.setProviderEncoding(ENCODING)
-            #layer.dataProvider().setEncoding(ENCODING)
+            if platform.system() == 'Windows':
+                layer.setProviderEncoding(ENCODING)
+                layer.dataProvider().setEncoding(ENCODING)
             print layer.dataProvider().encoding()
             self.provider = layer.dataProvider()
             allAttrs = self.provider.attributeIndexes()
