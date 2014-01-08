@@ -17,7 +17,6 @@ def obcina(request):
         x = float(request.GET['x'])
         y = float(request.GET['y'])
         id, ime = deltalife.katera_obcina(x, y)
-        print id, ime
         return HttpResponse(json.dumps({'id': int(id), 'ime': ime}), content_type="application/json")
     else:
         raise Http404
