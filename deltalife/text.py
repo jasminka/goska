@@ -10,23 +10,23 @@ import layers
 
 life = layers.DLife()
 layer_data = None
-IMENA = {'GOSTOTA': u'GOSTOTA POSELITVE',
-         'PRIRAST': u'SKUPNI PRIRAST',
-         'PADA': u'POVPREČNA LETNA KOLIČINA PADAVIN',
+IMENA = {'GOSTOTA': u'GOSTOTA POSELITVE (preb/km2)',
+         'PRIRAST': u'SKUPNI PRIRAST PREBIVALSTVA (na 1000 preb)',
+         'PADA': u'POVPREČNA LETNA KOLIČINA PADAVIN (mm)',
          'REG_BREZPO': u'REGISTRIRANA BREZPOSELNOST',
-         'URA_BRUTO': u'BRUTO PLAČILO ZA URO DELA',
-         'STOP_BREZP': u'STOPNJA BREZPOSELNOSTI',
-         'NAKLON': u'POVPREČEN NAKLON',
-         'DEL_TUJC': u'DELEŽ TUJCEV',
-         'TEMP': u'POVPREČNA LETNA TEMPERATURA',
+         'URA_BRUTO': u'BRUTO PLAČILO ZA URO DELA (€)',
+         'STOP_BREZP': u'STOPNJA BREZPOSELNOSTI (%)',
+         'NAKLON': u'POVPREČNI NAKLON (°)',
+         'DEL_TUJC': u'DELEŽ TUJCEV (%)',
+         'TEMP': u'POVPREČNA LETNA TEMPERATURA (°C)',
          'AREA': u'POVRŠINA',
          'INDX_STAR': u'INDEKS STARANJA PREBIVALSTVA',
-         'VISINA': u'POVPREČNA NADMORSKA VIŠINA',
+         'VISINA': u'POVPREČNA NADMORSKA VIŠINA (m)',
          'RUGG': u'RAZGIBANOST_POVRŠJA',
          'PET1': u'POKRAJINSKOEKOLOŠKA TIPIZACIJA',
          'PODJ': u'POVPREČNI KAPITAL PODJETJA',
-         'REKA2': u'VODNATOST',
-         'INDX_DELOV': u'INDEKS DELOVNE MIGRACIJE',
+         'REKA2': u'VODNATOST ((km/km2)*10000)',
+         'INDX_DELOV': u'INDEKS DELOVNE MIGRACIJE (del. aktivni po občini del. mesta/del. aktivni po občini prebivališča)*100',
          'INDX_STAR': u'INDEKS STARANJA',
 }
 # meje so izracunane na podlagi formule za iskanje statisticnih osamelcev (Q1 - 1.5*IQR, Q3 + 1.5*IQR), Q1 (1.kvartil), Q3 (tretji kvartil), IQR (intervartilna razlika) so bili izracunani v SPSS-u.
@@ -330,6 +330,7 @@ def vrednost_atributa(id, atribut): # za zeljeno obcino in atribut izpise vredno
     for i, ime in enumerate(ime_atr):
         if ime == atribut:
             return vrednosti[ndx][i], ime_atr[i], imena_obcin[ndx]
+print vrednost_atributa(70, 'STOP_BREZP')
 
 def kako_narazen_delez(atribut, id1,
                        id2): #vrne delez obcin, katerih vrednosti za poljuben atribut lezijo med izbranima obcinama
@@ -428,7 +429,7 @@ def normal_razl_meje(atr, id1, id2):
         vi2 = (v2 - v_min)/(v_max - v_min) * (100-0) + 0
     #print vi1, vi2
     return vi1, vi2, abs(vi1 - vi2)
-print normal_razl_meje('URA_BRUTO',70, 56)
+print normal_razl_meje('STOP_BREZP',70, 56)
 
 
 def normal_razl(atr, id1, id2):
@@ -499,6 +500,16 @@ def attr_mean(atr):
 
     return norm_mean
 
+def attr_mean_brez(atr):
+    mean = sum(vrednost_atributa_vse_obcine(atr))/ len(vrednost_atributa_vse_obcine(atr))
+    vse_vrednosti = vrednost_atributa_vse_obcine(atr)
+    v_min =  min(vse_vrednosti)
+    v_max = max(vse_vrednosti)
+    norm_mean = (mean - v_min)/(v_max - v_min) * (100-0) + 0
+
+    return norm_mean
+
+
 def opis(id1, id2):
     vsota, dic_skup, dic_razl, max_spremenlj = skupna_razlika(id1, id2)
 
@@ -531,6 +542,7 @@ def opis(id1, id2):
                 'min': minval,
                 'max': maxval,
             })
+
         items.sort(key=itemgetter('value'), reverse=True)
     k2.sort(key=itemgetter('value'), reverse=True)
 
@@ -593,3 +605,4 @@ def min_max_obcini(atr):
         if v <= MEJE[atr][1] and v > maximum:
             maximum = v
     return minimum, maximum
+

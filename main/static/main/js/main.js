@@ -57,6 +57,7 @@ $(document).ready(function () {
 
             $.each(data.kazalniki, function (index, value) {
                 kazalniki += "<div class=\"row\">";
+                kazalniki += "<div style=\"text-align:right; font-size:10px\">RAZLIKA<br/>Delež od največje možne razlike med dvema občinama<br/> brez ekstremov</div>";
                 kazalniki += "<div class=\"col-md-4\"><strong>{0}</strong></div>".format(value['group'])
                 kazalniki += "<div id=\"chart_{0}\" class=\"col-md-6\"></div>".format(counter);
                 kazalniki += "<div class=\"col-md-2 text-right\"><strong>{0}</strong> %</div><br/><br/>".format(Math.round(value['value']));
@@ -75,6 +76,7 @@ $(document).ready(function () {
             });
 
             $("#kazalniki").html(kazalniki);
+            d[0].sort(function(a, b) {return b.value - a.value});
             RadarChart.draw("#chart", d);
 
             counter = 0;
