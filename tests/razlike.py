@@ -1,6 +1,6 @@
 import operator
 
-from matplotlib import pyplot as plt
+#from matplotlib import pyplot as plt
 import deltalife
 
 
@@ -20,8 +20,8 @@ print
 print "max", max(di.values())
 print "min", min(di.values())
 
-plt.hist(di.values(), bins=50)
-plt.savefig("razlike.pdf")
+#plt.hist(di.values(), bins=50)
+#plt.savefig("razlike.pdf")
 
 
 #print "Pisem v datoteko"

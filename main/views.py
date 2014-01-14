@@ -25,7 +25,7 @@ def prim(request):
     if 'o1' in request.GET and 'o2' in request.GET:
         o1 = int(request.GET['o1'])
         o2 = int(request.GET['o2'])
-        povzetek, opis, kazalniki = deltalife.opis(o1, o2)
+        povzetek, opis, kazalniki = deltalife.opis(o1, o2, meje=False)
         return HttpResponse(json.dumps({
             'povzetek' : povzetek,
             'opis' : opis,

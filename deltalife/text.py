@@ -272,7 +272,12 @@ def get_layer_data(layer_name='OBCINE'):
     id = []
     imena_atributov = []
     for feat in life.features(layer_name): # Gre cez vse featurje (obcine) na sloju
-        attr_vals = feat.attributeMap() # key = field index, value = QgsFeatureAttribute
+        if hasattr(feat, 'attributeMap'):
+            attr_vals = feat.attributeMap() # key = field index, value = QgsFeatureAttribute
+        else:
+            # QGis 2.+
+            attr_vals = feat.attributes()
+
         attr_names = dict((val, key) for key, val in life.get_attr_dict(feat).iteritems())
         vals = []
         columns = sorted(attr_names.iterkeys())[2:]
@@ -375,11 +380,11 @@ def pretvori(ods):
         odg = u"Nekaj ne bo vredu."
     elif ods == 0:
         odg = u"Ni razlike."
-    elif ods > 0 and ods < 20:
+    elif ods > 0 and ods < 15:
         odg = u"Občini sta si precej podobni."
-    elif ods >= 20 and ods < 40:
+    elif ods >= 15 and ods < 35:
         odg = u"Občini sta nekoliko različni."
-    elif ods >= 40:
+    elif ods >= 35:
         odg = u"Občini sta precej različni."
     return odg
 
@@ -444,7 +449,7 @@ def normal_razl(atr, id1, id2):
     return vi1, vi2, abs(vi1 - vi2)
 print 'brez', normal_razl('URA_BRUTO', 70, 56)
 
-def skupna_razlika(id1, id2):
+def skupna_razlika(id1, id2, meje=True):
     dic_razl = {}
     dic = {
         u'družbene_značilnosti' : ('PRIRAST', 'DEL_TUJC', 'GOSTOTA', 'INDX_DELOV', 'URA_BRUTO', 'STOP_BREZP'),
@@ -455,7 +460,10 @@ def skupna_razlika(id1, id2):
     for skupina, d in dic.iteritems():
         dic_razl[skupina] = {}
         for spremenlj in d:
-            z = normal_razl_meje(spremenlj, id1, id2)[2]
+            if meje is True:
+                z = normal_razl_meje(spremenlj, id1, id2)[2]
+            else:
+                z = normal_razl(spremenlj, id1, id2)[2]
             dic_razl[skupina][spremenlj] = z
             if z > m:
                 m = z
@@ -510,8 +518,11 @@ def attr_mean_brez(atr):
     return norm_mean
 
 
-def opis(id1, id2):
-    vsota, dic_skup, dic_razl, max_spremenlj = skupna_razlika(id1, id2)
+def opis(id1, id2, meje=True):
+    if meje is True:
+        vsota, dic_skup, dic_razl, max_spremenlj = skupna_razlika(id1, id2)
+    else:
+        vsota, dic_skup, dic_razl, max_spremenlj = skupna_razlika(id1, id2, meje=False)
 
     k2 = []
     for skl, val in dic_razl.iteritems():
@@ -527,24 +538,43 @@ def opis(id1, id2):
             'o2': 40,
             'mean': 30,
         });
-        for k, v in val.iteritems():
-            minval, maxval = min_max_obcini(k)
-            items.append({
-                'attribute': IMENA[k].lower(),
-                'value': v,
-                'o1': normal_razl_meje(k, id1, id2)[0],
-                'o1_real': vrednost_atributa(id1, k)[0],
-                'o1_name': id_ime(id1),
-                'o2': normal_razl_meje(k, id1, id2)[1],
-                'o2_real': vrednost_atributa(id2, k)[0],
-                'o2_name': id_ime(id2),
-                'mean': attr_mean(k),
-                'min': minval,
-                'max': maxval,
-            })
+        if meje is True:
+            for k, v in val.iteritems():
+                minval, maxval = min_max_obcini(k)
+                items.append({
+                    'attribute': IMENA[k].lower(),
+                    'value': v,
+                    'o1': normal_razl_meje(k, id1, id2)[0],
+                    'o1_real': vrednost_atributa(id1, k)[0],
+                    'o1_name': id_ime(id1),
+                    'o2': normal_razl_meje(k, id1, id2)[1],
+                    'o2_real': vrednost_atributa(id2, k)[0],
+                    'o2_name': id_ime(id2),
+                    'mean': attr_mean(k),
+                    'min': minval,
+                    'max': maxval,
+                })
+        else:
+            for k, v in val.iteritems():
+
+                items.append({
+                    'attribute': IMENA[k].lower(),
+                    'value': v,
+                    'o1': normal_razl(k, id1, id2)[0],
+                    'o1_real': vrednost_atributa(id1, k)[0],
+                    'o1_name': id_ime(id1),
+                    'o2': normal_razl(k, id1, id2)[1],
+                    'o2_real': vrednost_atributa(id2, k)[0],
+                    'o2_name': id_ime(id2),
+                    'mean': attr_mean(k),
+                    'min': min(vrednost_atributa_vse_obcine(k)),
+                    'max': max(vrednost_atributa_vse_obcine(k)),
+                })
+
 
         items.sort(key=itemgetter('value'), reverse=True)
     k2.sort(key=itemgetter('value'), reverse=True)
+
 
     o1 = lepo_ime(id_ime(id1))
     o2 = lepo_ime(id_ime(id2))
@@ -583,7 +613,8 @@ def opis(id1, id2):
         max_spremenlj = ""
 
     povzetek = u"{0} {1}".format(pretvori(vsota), vec_razl)
-    return povzetek, opis, k2
+    print 'k', k2
+    return povzetek, opis, k2 # k2 je seznam slovarjev
 
 def vse_razlike(limit=None):
     id, imena_obcin, ime_atr, vrednosti = get_layer_data()

@@ -34,7 +34,7 @@ $(document).ready(function () {
         //$("#sum").html("ix/iy: " + ix + "/" + iy + " x/y: " + x + "/" + y)
 
         $.get("/coor/?x=" + x + "&y=" + y, function (data) {
-            var select_id = (last === 0) ? '#select-1' : '#select-2';
+            var select_id = (last === 0) ? '#select-1' : '#select-2';//izbereš 1. ali 2. gumb iz html-ja, da ga boš napolnil
             last = (last + 1) % 2;
 
             $(select_id + ' option[value="' + data.id + '"]').attr('selected', 'selected');
@@ -57,7 +57,7 @@ $(document).ready(function () {
 
             $.each(data.kazalniki, function (index, value) {
                 kazalniki += "<div class=\"row\">";
-                kazalniki += "<div style=\"text-align:right; font-size:10px\">RAZLIKA<br/>Delež od največje možne razlike med dvema občinama<br/> brez ekstremov</div>";
+                kazalniki += "<div style=\"text-align:right; font-size:10px\">RAZLIKA<br/>(100%: največja razlika med občinami) <br/></div>";
                 kazalniki += "<div class=\"col-md-4\"><strong>{0}</strong></div>".format(value['group'])
                 kazalniki += "<div id=\"chart_{0}\" class=\"col-md-6\"></div>".format(counter);
                 kazalniki += "<div class=\"col-md-2 text-right\"><strong>{0}</strong> %</div><br/><br/>".format(Math.round(value['value']));
@@ -74,10 +74,15 @@ $(document).ready(function () {
                     counter += 1;
                 });
             });
-
-            $("#kazalniki").html(kazalniki);
+            var radar = "<strong>Graf razlik med izbranima občinama od največje do najmanše razlike</strong></br></br></br>"
+            var naslov = "<strong>Opis razlik</strong>"
+            var legenda = ""
+            $("#kazalniki").html(kazalniki); //Funkcija, ki razredu #kazalniki dodaš vsebino
             d[0].sort(function(a, b) {return b.value - a.value});
+            $("#chart").html(radar);
             RadarChart.draw("#chart", d);
+            $("#naslov").html(naslov);
+            $("#legenda").html(legenda);
 
             counter = 0;
             $.each(data.kazalniki, function (index, value) {

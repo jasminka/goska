@@ -84,13 +84,19 @@ class DLife(object):
                 layer.dataProvider().setEncoding(ENCODING)
             print layer.dataProvider().encoding()
             self.provider = layer.dataProvider()
-            allAttrs = self.provider.attributeIndexes()
-            self.provider.select(allAttrs)
+
             feat = qc.QgsFeature()
             index = qc.QgsSpatialIndex() # create a spatial index
 
-            while self.provider.nextFeature(feat):
-                index.insertFeature(feat)
+            if hasattr(layer, 'getFeatures'):
+                # QGis 2.+
+                for feat in layer.getFeatures():
+                    index.insertFeature(feat)
+            else:
+                all_attrs = self.provider.attributeIndexes()
+                self.provider.select(all_attrs)
+                while self.provider.nextFeature(feat):
+                    index.insertFeature(feat)
 
             self.layers[layer_name] = (layer, index)
 
@@ -102,16 +108,27 @@ class DLife(object):
         inter = index.intersects(qc.QgsRectangle(x, y, x, y))
         for id in inter:
             feat = qc.QgsFeature()
-            layer.featureAtId(id, feat, True, True)
-            if feat.geometry().contains(qc.QgsPoint(x, y)):
-                return feat
+            if hasattr(layer, 'featureAtId'):
+                layer.featureAtId(id, feat, True, True)
+                if feat.geometry().contains(qc.QgsPoint(x, y)):
+                    return feat
+            else:
+                # QGis 2.+
+                exist = layer.getFeatures(qc.QgsFeatureRequest().setFilterFid(id)).nextFeature(feat)
+                if exist and feat.geometry().contains(qc.QgsPoint(x, y)):
+                    return feat
 
         return None
 
     def get_attribute(self, feat, name):
         # Funkcija vrne vrednost iz tabele za podano obcino (feat) in atribut (name).
         ndx = self.provider.fieldNameIndex(name)
-        val = feat.attributeMap()[ndx]
+
+        if hasattr(feat, 'attributeMap'):
+            val = feat.attributeMap()[ndx]
+        else:
+            # QGis 2.+
+            val = feat.attributes()[ndx]
 
         if val.type() == PyQt4.QtCore.QVariant.String:
             return unicode(val.toPyObject(), ENCODING)
@@ -124,14 +141,19 @@ class DLife(object):
         return dict
 
     def features(self, layer_name):
-
         feat = qc.QgsFeature()
         layer, index = self.get_layer(layer_name)
-        provider = layer.dataProvider()
-        allAttrs = provider.attributeIndexes()
-        provider.select(allAttrs)
-        while provider.nextFeature(feat):
-            yield feat
+
+        if hasattr(layer, 'getFeatures'):
+            # QGis 2.+
+            for feat in layer.getFeatures():
+                yield feat
+        else:
+            provider = layer.dataProvider()
+            all_attrs = provider.attributeIndexes()
+            provider.select(all_attrs)
+            while provider.nextFeature(feat):
+                yield feat
 
     def load_raster(self, fileName, x, y):
         fileName = "C:\Users\Jasmina\Dropbox\Documents\Faks\Diploma\kam\home\deltalife\data\dmnv_100\dmnv100\w001001.adf"
