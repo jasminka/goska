@@ -15,7 +15,8 @@ $(".chosen-select").chosen({no_results_text: "Oops, nothing found!"});
 
 $(document).ready(function () {
     var img = $("#prj"),
-        last = 0;
+        last = 0,
+        data;
 
     img.click(function (e) {
         var offset = $(this).offset();
@@ -42,94 +43,147 @@ $(document).ready(function () {
             $(select_id).trigger("chosen:updated");
         });
     });
+
+    $('#optionsOsnovni').click(function () {
+        if (data) {
+            refresh();
+        }
+    });
+
+    $('#optionsNapredni').click(function () {
+        if (data) {
+            refresh();
+        }
+    });
+
+    function refresh() {
+        $("#sum").html(data.povzetek);
+        $("#opis").html(data.opis);
+
+        var kazalniki = "",
+            d = [[]],
+            counter = 0;
+
+        $.each(data.kazalniki, function (index, value) {
+            kazalniki += "<div class=\"row\">";
+            kazalniki += "<div style=\"text-align:right; font-size:10px\">RAZLIKA<br/>(100%: največja razlika med občinami) <br/></div>";
+            kazalniki += "<div class=\"col-md-4\"><strong>{0}</strong></div>".format(value['group'])
+            kazalniki += "<div id=\"chart_{0}\" class=\"col-md-6\"></div>".format(counter);
+            kazalniki += "<div class=\"col-md-2 text-right\"><strong>{0}</strong> %</div><br/><br/>".format(Math.round(value['value']));
+            kazalniki += "</div>";
+            counter += 1;
+
+            $.each(value.attributes, function (index, value) {
+                kazalniki += "<div class=\"row\">";
+                kazalniki += "<div class=\"col-md-4\">{0}</div>".format(value['attribute']);
+                kazalniki += "<div id=\"chart_{0}\" class=\"col-md-6\"></div>".format(counter);
+                kazalniki += "<div class=\"col-md-2 text-right\">{0} %</div>".format(Math.round(value['value']));
+                kazalniki += "</div>";
+                d[0].push({axis: value['attribute'], value: value['value']});
+                counter += 1;
+            });
+        });
+        $("#kazalniki").html(kazalniki); //Funkcija, ki razredu #kazalniki dodaš vsebino
+        d[0].sort(function(a, b) {return b.value - a.value});
+        RadarChart.draw("#chart", d);
+
+        function chosenChart(c, value) {
+            var margin = {top: 15, right: 40, bottom: 15, left: 20},
+                width = 500 - margin.left - margin.right,
+                height = 47 - margin.top - margin.bottom;
+            var chart = d3.bullet()
+                .width(width)
+                .height(height);
+
+            var ddd = [
+                {
+                    "o": [
+                        {"name": value['o1_name'], "value": value['o1']},
+                        {"name": value['o2_name'], "value": value['o2']}
+                    ],
+                    "ranges": [value['o1'], value['o2'], 100],
+                    "measures": [0, 0],
+                    "markers": [value['mean']],
+                    "real": {
+                        0: value['min'],
+                        100: value['max']
+                    }
+                }
+            ];
+
+            ddd[0]["real"][value['o1']] = value['o1_real'];
+            ddd[0]["real"][value['o2']] = value['o2_real'];
+
+            var svg = d3.select("#chart_" + c).selectAll("svg")
+                .data(ddd)
+                .enter().append("svg")
+                .attr("class", "bullet")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .call(chart);
+        }
+
+        function barChart(c, value) {
+            var plot = $.jqplot('chart_' + c, [[[value.o2_real, 1]], [[value.o1_real, 2]], [[value.max, 3]], [[value.mean, 4]], [[value.min, 5]]], {
+                seriesDefaults: {
+                    renderer:$.jqplot.BarRenderer,
+                    // Show point labels to the right ('e'ast) of each bar.
+                    // edgeTolerance of -15 allows labels flow outside the grid
+                    // up to 15 pixels.  If they flow out more than that, they
+                    // will be hidden.
+                    pointLabels: { show: true, location: 'e', edgeTolerance: -15 },
+                    // Here's where we tell the chart it is oriented horizontally.
+                    rendererOptions: {
+                        barDirection: 'horizontal'
+                    },
+                    shadow: false
+                },
+                axes: {
+                    yaxis: {
+                        renderer: $.jqplot.CategoryAxisRenderer,
+                        tickOptions:{
+                            showGridline: false,
+                            mark: false
+                        },
+                        ticks: [value.o2_name, value.o1_name, 'MAX', 'POVPREČJE', 'MIN']
+                    }
+                },
+                grid:{
+                    shadow: false,
+                    borderWidth: 0,
+                    background: '#ffffff'
+                }
+            });
+        }
+
+        counter = 0;
+        $.each(data.kazalniki, function (index, value) {
+            counter += 1;
+            $.each(value.attributes, function (index, value) {
+                if ($("input:radio[name=optionsRadios]:checked").val() === 'osnovni') {
+                    barChart(counter, value);
+                } else {
+                    chosenChart(counter, value);
+                }
+                counter += 1;
+            });
+        });
+    }
+
     var btnsum = $("#btnsum");
     btnsum.click(function () {
         btnsum.button('loading');
-        $.get("/compare/?o1=" + $('#select-1').val() + "&o2=" + $('#select-2').val(),function (data) {
-            $("#sum").html(data.povzetek);
-            $("#opis").html(data.opis);
-
-            var kazalniki = "",
-                d = [
-                    []
-                ],
-                counter = 0;
-
-            $.each(data.kazalniki, function (index, value) {
-                kazalniki += "<div class=\"row\">";
-                kazalniki += "<div style=\"text-align:right; font-size:10px\">RAZLIKA<br/>(100%: največja razlika med občinami) <br/></div>";
-                kazalniki += "<div class=\"col-md-4\"><strong>{0}</strong></div>".format(value['group'])
-                kazalniki += "<div id=\"chart_{0}\" class=\"col-md-6\"></div>".format(counter);
-                kazalniki += "<div class=\"col-md-2 text-right\"><strong>{0}</strong> %</div><br/><br/>".format(Math.round(value['value']));
-                kazalniki += "</div>";
-                counter += 1;
-
-                $.each(value.attributes, function (index, value) {
-                    kazalniki += "<div class=\"row\">";
-                    kazalniki += "<div class=\"col-md-4\">{0}</div>".format(value['attribute']);
-                    kazalniki += "<div id=\"chart_{0}\" class=\"col-md-6\"></div>".format(counter);
-                    kazalniki += "<div class=\"col-md-2 text-right\">{0} %</div>".format(Math.round(value['value']));
-                    kazalniki += "</div>";
-                    d[0].push({axis: value['attribute'], value: value['value']});
-                    counter += 1;
-                });
-            });
-            var radar = "<strong>Graf razlik med izbranima občinama od največje do najmanše razlike</strong></br></br></br>"
-            var naslov = "<strong>Opis razlik</strong>"
-            var legenda = ""
-            $("#kazalniki").html(kazalniki); //Funkcija, ki razredu #kazalniki dodaš vsebino
-            d[0].sort(function(a, b) {return b.value - a.value});
-            $("#chart").html(radar);
-            RadarChart.draw("#chart", d);
-            $("#naslov").html(naslov);
-            $("#legenda").html(legenda);
-
-            counter = 0;
-            $.each(data.kazalniki, function (index, value) {
-                counter += 1;
-                $.each(value.attributes, function (index, value) {
-                    var margin = {top: 15, right: 40, bottom: 15, left: 20},
-                        width = 500 - margin.left - margin.right,
-                        height = 47 - margin.top - margin.bottom;
-                    var chart = d3.bullet()
-                        .width(width)
-                        .height(height);
-
-                    var ddd = [
-                        {
-                            "o": [
-                                {"name": value['o1_name'], "value": value['o1']},
-                                {"name": value['o2_name'], "value": value['o2']}
-                            ],
-                            "ranges": [value['o1'], value['o2'], 100],
-                            "measures": [0, 0],
-                            "markers": [value['mean']],
-                            "real": {
-                                0: value['min'],
-                                100: value['max']
-                            }
-                        }
-                    ];
-
-                    ddd[0]["real"][value['o1']] = value['o1_real'];
-                    ddd[0]["real"][value['o2']] = value['o2_real'];
-
-                    var svg = d3.select("#chart_" + counter).selectAll("svg")
-                        .data(ddd)
-                        .enter().append("svg")
-                        .attr("class", "bullet")
-                        .attr("width", width + margin.left + margin.right)
-                        .attr("height", height + margin.top + margin.bottom)
-                        .append("g")
-                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                        .call(chart);
-                    counter += 1;
-                });
-            });
+        $.get("/compare/?o1=" + $('#select-1').val() + "&o2=" + $('#select-2').val(),function (_data) {
+            $('#accordion').show();
+            data = _data;
+            refresh();
 
         }).always(function () {
-                btnsum.button('reset');
-            });
+            btnsum.button('reset');
+        });
+
         return false;
     });
 });

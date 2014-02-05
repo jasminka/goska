@@ -556,7 +556,7 @@ def opis(id1, id2, meje=True):
                 })
         else:
             for k, v in val.iteritems():
-
+                vals = vrednost_atributa_vse_obcine(k)
                 items.append({
                     'attribute': IMENA[k].lower(),
                     'value': v,
@@ -566,9 +566,9 @@ def opis(id1, id2, meje=True):
                     'o2': normal_razl(k, id1, id2)[1],
                     'o2_real': vrednost_atributa(id2, k)[0],
                     'o2_name': id_ime(id2),
-                    'mean': attr_mean(k),
-                    'min': min(vrednost_atributa_vse_obcine(k)),
-                    'max': max(vrednost_atributa_vse_obcine(k)),
+                    'mean': sum(vals) / len(vals),
+                    'min': min(vals),
+                    'max': max(vals),
                 })
 
 

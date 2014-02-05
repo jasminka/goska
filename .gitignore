@@ -6,7 +6,7 @@
 *.pyproj
 *.sublime-*
 sftp-config.json
-static
+/static
 
 # Ignore dot files.
 .*

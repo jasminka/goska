@@ -8,6 +8,8 @@
     <!-- Bootstrap -->
     <link href="{% static 'main/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'main/chosen/chosen.css' %}" rel="stylesheet">
+    <link href="{% static 'main/chosen/chosen-bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'main/css/jquery.jqplot.min.css' %}" rel="stylesheet">
     <link href="{% static 'main/css/style.css' %}" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -64,7 +66,24 @@
         </div>
     </div>
 
-    <div class="panel-group spacer50" id="accordion">
+    <div class="row spacer50">
+        <div class="col-md-12 text-center">
+            <div class="radio-inline">
+              <label>
+                <input type="radio" name="optionsRadios" id="optionsOsnovni" value="osnovni" checked>
+                Osnovni pogled
+              </label>
+            </div>
+            <div class="radio-inline">
+              <label>
+                <input type="radio" name="optionsRadios" id="optionsNapredni" value="napredni">
+                Napredni pogled
+              </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-group spacer50" id="accordion" style="display: none;">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
@@ -72,33 +91,50 @@
                     </a>
                 </h4>
             </div>
+            <div id="opis" class="panel-body"></div>
+            <div id="legenda"></div>
+        </div>
 
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Kazalniki
+                </h4>
+            </div>
             <div id="collapseOne" class="panel-collapse collapse">
             </div>
 
             <div id="kazalniki" class="panel-body"></div>
-            <div id="chart" class="panel-body" style="..."></div>
         </div>
-    </div>
-    <div class="panel panel-default">
-        <div id="naslov"></div>
-        <div id="opis" class="panel-body">
 
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Graf razlik med izbranima občinama (od največje do najmanše razlike)
+                </h4>
+            </div>
+            <div class="col-md-12 text-center">
+                <div id="chart" class="panel-body" style="..."></div>
+            </div>
         </div>
-        <div id="legenda"></div>
     </div>
-</div>
-<div id="wrap">
-    <div id="main" class="container clear-top">
-        <p> Jasmina Kregar / 2013 </p>
+
+    <div id="wrap">
+        <div id="main" class="container clear-top">
+            <p> Jasmina Kregar / 2013 </p>
+        </div>
     </div>
-</div>
-<footer class="footer"></footer>
+    <footer class="footer"></footer>
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="{% static 'main/js/jquery.js' %}"></script>
 <script src="{% static 'main/chosen/chosen.jquery.js' %}"></script>
+<!-- Include jqPlot JavaScripts -->
+<script src="{% static 'main/js/jquery.jqplot.min.js' %}"></script>
+<script src="{% static 'main/js/jqplot.barRenderer.min.js' %}"></script>
+<script src="{% static 'main/js/jqplot.categoryAxisRenderer.min.js' %}"></script>
+<script src="{% static 'main/js/jqplot.pointLabels.min.js' %}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'main/js/d3.v3.min.js' %}"></script>

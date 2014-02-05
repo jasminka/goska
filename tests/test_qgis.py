@@ -10,6 +10,7 @@ for provider in providers:
 print
 print QgsApplication.showSettings()
 
-l = QgsVectorLayer('/Users/jasmina/Dropbox/Documents/Faks/Diploma/data/obcine/Obcine.shp', 'obcine', 'ogr')
-print l.isValid()
+#l = QgsVectorLayer('/Users/jasmina/Dropbox/Documents/Faks/Diploma/data/obcine/Obcine.shp', 'obcine', 'ogr')
+l = QgsVectorLayer('/Users/miha/work/fun/goska/data/obcine/Obcine.shp', 'obcine', 'ogr')
 
+print l.isValid()
