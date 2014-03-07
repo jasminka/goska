@@ -25,9 +25,9 @@ IMENA = {'GOSTOTA': u'GOSTOTA POSELITVE (preb/km2)',
          'RUGG': u'RAZGIBANOST_POVRŠJA',
          'PET1': u'POKRAJINSKOEKOLOŠKA TIPIZACIJA',
          'PODJ': u'POVPREČNI KAPITAL PODJETJA',
-         'REKA2': u'VODNATOST ((km/km2)*10000)',
+         'REKA2': u'GOSTOTA REČNE MREŽE (km/km2)',
          'INDX_DELOV': u'INDEKS DELOVNE MIGRACIJE (del. aktivni po občini del. mesta/del. aktivni po občini prebivališča)*100',
-         'INDX_STAR': u'INDEKS STARANJA',
+
 }
 # meje so izracunane na podlagi formule za iskanje statisticnih osamelcev (Q1 - 1.5*IQR, Q3 + 1.5*IQR), Q1 (1.kvartil), Q3 (tretji kvartil), IQR (intervartilna razlika) so bili izracunani v SPSS-u.
 MEJE = {
@@ -50,7 +50,7 @@ MEJE = {
     'RUGG': [27.6 - 1.5 * 39.3, 66.9 + 1.5 * 39.3],
     'PET1': [2 - 1.5 * 2, 4 + 1.5 * 2],
     'PODJ': [9 - 1.5 * 17, 26 + 1.5 * 17],
-    'REKA2': [14.1 - 1.5 * 9.9, 24.0 + 1.5 * 9.9],
+    'REKA2': [0, 0],
 }
 
 OPIS = [
@@ -123,13 +123,13 @@ OPIS = [
         'group': u"naravne_značilnosti",
     },{
         'attribute': 'REKA2',
-        'template': u"Občina {o1} je {feature}. "+ u'<br/>' + u'<br/>',
+        'template': u"Občina {o1} ima {feature}. "+ u'<br/>' + u'<br/>',
         'features': {
-            (-1000, -30): u"precej manj vodnata",
-            (-30, -10): u"nekoliko manj vodnata",
-            (-10, 10): u"približno enako vodnata",
-            (10, 30): u"nekoliko bolj vodnata",
-            (30, 1000): u"precej bolj vodnata",
+            (-1000, -30): u"precej manj gosto rečno mrežo",
+            (-30, -10): u"nekoliko manj gosto rečno mrežo",
+            (-10, 10): u"približno enako gosto rečno mrežo",
+            (10, 30): u"nekoliko bolj gosto rečno mrežo",
+            (30, 1000): u"precej bolj gosto rečno mrežo",
         },
         'choices': {
             (-1000, -15): u"manjši",
@@ -335,7 +335,7 @@ def vrednost_atributa(id, atribut): # za zeljeno obcino in atribut izpise vredno
     for i, ime in enumerate(ime_atr):
         if ime == atribut:
             return vrednosti[ndx][i], ime_atr[i], imena_obcin[ndx]
-print vrednost_atributa(70, 'STOP_BREZP')
+print vrednost_atributa(12, 'REKA2')
 
 def kako_narazen_delez(atribut, id1,
                        id2): #vrne delez obcin, katerih vrednosti za poljuben atribut lezijo med izbranima obcinama
@@ -434,7 +434,7 @@ def normal_razl_meje(atr, id1, id2):
         vi2 = (v2 - v_min)/(v_max - v_min) * (100-0) + 0
     #print vi1, vi2
     return vi1, vi2, abs(vi1 - vi2)
-print normal_razl_meje('STOP_BREZP',70, 56)
+
 
 
 def normal_razl(atr, id1, id2):
@@ -447,7 +447,7 @@ def normal_razl(atr, id1, id2):
     vi2 = (v2 - v_min)/(v_max - v_min) * (100-0) + 0
     #print vi1, vi2
     return vi1, vi2, abs(vi1 - vi2)
-print 'brez', normal_razl('URA_BRUTO', 70, 56)
+print normal_razl('REKA2', 065, 061)
 
 def skupna_razlika(id1, id2, meje=True):
     dic_razl = {}
