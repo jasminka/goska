@@ -9,7 +9,10 @@ import deltalife
 
 def index(request):
     obcine = deltalife.get_obcine()
-    return render(request, 'main/index.html', {"obcine": obcine})
+    sklopi = []
+    for key, val in deltalife.SKLOPI.items():
+        sklopi.append({'id': key, 'ime': val['ime']})
+    return render(request, 'main/index.html', {"obcine": obcine, 'sklopi': sklopi})
 
 
 def obcina(request):
@@ -33,3 +36,7 @@ def prim(request):
         }), content_type="application/json")
     else:
         raise Http404
+
+
+def sklopi(request):
+    return HttpResponse(json.dumps(deltalife.SKLOPI), content_type="application/json")

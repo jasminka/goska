@@ -73,3 +73,7 @@ html, body {
 .jqplot-target {
     height: 100px;
 }
+
+#panelSklopi {
+    overflow: visible;
+}

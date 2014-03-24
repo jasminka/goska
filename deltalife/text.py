@@ -29,6 +29,42 @@ IMENA = {'GOSTOTA': u'GOSTOTA POSELITVE (preb/km2)',
          'INDX_DELOV': u'INDEKS DELOVNE MIGRACIJE (del. aktivni po občini del. mesta/del. aktivni po občini prebivališča)*100',
 
 }
+SKLOPI = {
+    'PODNEBJE': {
+        'ime': 'Podnebje',
+        'kazalniki': ['PADA']
+    },
+    'IZO_POV': {
+        'ime': 'Izoblikovanost površja',
+        'kazalniki': ['VISINA']
+    },
+    'DEMOG': {
+        'ime': 'Demografska struktura',
+        'kazalniki': ['INDX_STAR']
+    },
+    'SOCIO': {
+        'ime': 'Socialna struktura',
+        'kazalniki': ['STOP_BREZP']
+    },
+    'PRST_RAST': {
+        'ime': 'Prst in rastlinstvo',
+        'kazalniki': ['']
+    },
+    'MIGRACIJE': {
+        'ime': 'Migracije',
+        'kazalniki': ['INDX_DELOV']
+    },
+    'ZAPOS': {
+        'ime': 'Zaposlitvena struktura',
+        'kazalniki': ['STOP_BREZP']
+    },
+
+
+
+
+
+}
+
 # meje so izracunane na podlagi formule za iskanje statisticnih osamelcev (Q1 - 1.5*IQR, Q3 + 1.5*IQR), Q1 (1.kvartil), Q3 (tretji kvartil), IQR (intervartilna razlika) so bili izracunani v SPSS-u.
 MEJE = {
     'GOSTOTA': [46.1 - 1.5 * 85.4, 131.5 + 1.5 * 85.4],
@@ -542,6 +578,7 @@ def opis(id1, id2, meje=True):
             for k, v in val.iteritems():
                 minval, maxval = min_max_obcini(k)
                 items.append({
+                    'id': k,
                     'attribute': IMENA[k].lower(),
                     'value': v,
                     'o1': normal_razl_meje(k, id1, id2)[0],
@@ -558,6 +595,7 @@ def opis(id1, id2, meje=True):
             for k, v in val.iteritems():
                 vals = vrednost_atributa_vse_obcine(k)
                 items.append({
+                    'id': k,
                     'attribute': IMENA[k].lower(),
                     'value': v,
                     'o1': normal_razl(k, id1, id2)[0],

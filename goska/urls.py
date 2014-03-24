@@ -14,5 +14,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', views.index, name='index'),
     url(r'^coor/$', views.obcina, name='obcina'),
+    url(r'^sklopi/$', views.sklopi, name='sklopi'),
     url(r'^compare/$', views.prim, name='prim'),
 )

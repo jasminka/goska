@@ -70,20 +70,20 @@
         <div class="col-md-12 text-center">
             <div class="radio-inline">
               <label>
-                <input type="radio" name="optionsRadios" id="optionsOsnovni" value="osnovni" checked>
+                <input type="radio" name="optionsRadios" id="optionsOsnovni" value="osnovni">
                 Osnovni pogled
               </label>
             </div>
             <div class="radio-inline">
               <label>
-                <input type="radio" name="optionsRadios" id="optionsNapredni" value="napredni">
-                Napredni pogled
+                <input type="radio" name="optionsRadios" id="optionsNapredni" value="napredni" checked>
+                 Pogled po sklopih
               </label>
             </div>
         </div>
     </div>
 
-    <div class="panel-group spacer50" id="accordion" style="display: none;">
+    <div class="panel-group spacer50" id="accordion" >
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
@@ -95,29 +95,44 @@
             <div id="legenda"></div>
         </div>
 
-        <div class="panel panel-default">
+        <div id="panelOsnovni" class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     Kazalniki
                 </h4>
             </div>
-            <div id="collapseOne" class="panel-collapse collapse">
-            </div>
-
             <div id="kazalniki" class="panel-body"></div>
         </div>
 
-
-    </div>
-
-
-
-    <div id="wrap">
-        <div id="main" class="container clear-top">
-            <p> Jasmina Kregar / 2013 </p>
+        <div id="panelSklopi" class="panel panel-default" >
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    Kazalniki po sklopih
+                </h4>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <select id="sklop-1" data-placeholder="Izberi sklop" class="form-control chosen-select" style="width:100%;">
+                            <option value=""></option>
+                            {% for sklop in sklopi %}
+                                <option value="{{ sklop.id }}">{{ sklop.ime }}</option>
+                            {% endfor %}
+                        </select>
+                        <div id="grafi-1"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <footer class="footer"></footer>
+
+    <footer class="footer" style="margin-top: 100px;">
+        <div id="wrap">
+            <div id="main" class="container clear-top">
+                <p> Jasmina Kregar / 2013 </p>
+            </div>
+        </div>
+    </footer>
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
