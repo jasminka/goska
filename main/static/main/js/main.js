@@ -65,21 +65,121 @@ $(document).ready(function () {
         }
     });
 
-    $('#sklop-1').chosen().change(function (evt, combo) {
-        var sklop = combo.selected;
+    var drawSklopi = function (group, sklop) {
+        var counter = 0;
+        $('#' + group).html('');
 
         if (sklop && sklopi) {
             $.each(data.kazalniki, function (index, value) {
                 $.each(value.attributes, function (index, attribute) {
                     if (sklopi[sklop].kazalniki.indexOf(attribute.id) != -1) {
                         console.log(attribute);
+                        var min = attribute.min_name;
+                        if (min.length > 7){
+                            min = attribute.min_name.substring(0,7) + '...'
+                        };
+                        var max = attribute.max_name;
+                        if (max.length > 7){
+                            max = attribute.max_name.substring(0,7) + '...'
+                        };
+                        var data = [
+                            [min, attribute.min],
+                            ['POVPRECJE', attribute.mean],
+                            [max, attribute.max],
+                            [attribute.o1_name, attribute.o1_real],
+                            [attribute.o2_name, attribute.o2_real]
+                        ];
 
+                        var id = group + '-' + counter.toString();
+                        var a = attribute.attribute;
+                        if (a.length > 20) {
+                            a = a.substring(0, 20) + '...'
+                        }
 
+                        //var ticks = ['Min', 'Max', 'Mean', 'Kranjska gora', 'Ljubljana'];
+                        $('#' + group).append('<div id="' + id + '" style="height:300px;"></div>');
+                        $.jqplot(id, [data], {
+                            // Tell the plot to stack the bars.
+                            captureRightClick: true,
+                              seriesDefaults:{
+                              renderer:$.jqplot.BarRenderer,
+                              rendererOptions: {
+                                  // Put a 30 pixel margin between bars.
+                                  barMargin: 7,
+                                  varyBarColor : true,
+                                            // Highlight bars when mouse button pressed.
+                                  // Disables default highlighting on mouse over.
+                                  highlightMouseDown: true
 
+                              },
+                              pointLabels: {
+                              show: true,
+                              edgeTolerance: -5
+
+                              }
+                            },
+                            series:[{renderer:$.jqplot.BarRenderer}],
+                            axesDefaults: {
+                              tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                              tickOptions: {
+                                angle: -70,
+                                fontSize: '7pt',
+
+                                drawBaseline: false
+                              }
+                            },
+                            axes: {
+                                xaxis: {
+                                    renderer: $.jqplot.CategoryAxisRenderer,
+                                    tickOptions: {
+                                  labelPosition: 'end',
+                                  showGridline: false,
+
+                                  fontSize: '11pt'
+                                  }
+                                },
+                                yaxis: {
+                                    tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                                    tickOptions: {
+                                        labelPosition: 'start',
+                                        formatString: '%3.1f',
+                                        angle: 0
+                                    },
+                                    label: a,
+                                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+                                }
+                            },
+                            legend: {
+                              show: false,
+                              location: 'e',
+                              placement: 'outside'
+                            },
+                              grid: {
+                              background: '#ffffff',
+                              borderWidth: 0.0,
+                              shadow: false
+                            }
+                        });
+                        counter++;
                     }
                 });
             });
         }
+    };
+
+    $('#sklop-1').chosen().change(function (evt, combo) {
+        var sklop = combo.selected;
+        drawSklopi('grafi-1', sklop);
+    });
+
+    $('#sklop-2').chosen().change(function (evt, combo) {
+        var sklop = combo.selected;
+        drawSklopi('grafi-2', sklop);
+    });
+
+    $('#sklop-3').chosen().change(function (evt, combo) {
+        var sklop = combo.selected;
+        drawSklopi('grafi-3', sklop);
     });
 
     function refresh() {

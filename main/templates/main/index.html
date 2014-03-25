@@ -121,6 +121,24 @@
                         </select>
                         <div id="grafi-1"></div>
                     </div>
+                    <div class="col-md-4">
+                        <select id="sklop-2" data-placeholder="Izberi sklop" class="form-control chosen-select" style="width:100%;">
+                            <option value=""></option>
+                            {% for sklop in sklopi %}
+                                <option value="{{ sklop.id }}">{{ sklop.ime }}</option>
+                            {% endfor %}
+                        </select>
+                        <div id="grafi-2"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <select id="sklop-3" data-placeholder="Izberi sklop" class="form-control chosen-select" style="width:100%;">
+                            <option value=""></option>
+                            {% for sklop in sklopi %}
+                                <option value="{{ sklop.id }}">{{ sklop.ime }}</option>
+                            {% endfor %}
+                        </select>
+                        <div id="grafi-3"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,6 +158,9 @@
 <script src="{% static 'main/chosen/chosen.jquery.js' %}"></script>
 <!-- Include jqPlot JavaScripts -->
 <script src="{% static 'main/js/jquery.jqplot.min.js' %}"></script>
+<script src="{% static 'main/js/jqplot.canvasAxisTickRenderer.min.js' %}"></script>
+<script src="{% static 'main/js/jqplot.canvasTextRenderer.min.js' %}"></script>
+<script src="{% static 'main/js/jqplot.canvasAxisLabelRenderer.min.js' %}"></script>
 <script src="{% static 'main/js/jqplot.barRenderer.min.js' %}"></script>
 <script src="{% static 'main/js/jqplot.categoryAxisRenderer.min.js' %}"></script>
 <script src="{% static 'main/js/jqplot.pointLabels.min.js' %}"></script>

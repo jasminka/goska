@@ -32,19 +32,20 @@ IMENA = {'GOSTOTA': u'GOSTOTA POSELITVE (preb/km2)',
 SKLOPI = {
     'PODNEBJE': {
         'ime': 'Podnebje',
-        'kazalniki': ['PADA']
+        'kazalniki': ['TEMP','PADA']
+
     },
     'IZO_POV': {
         'ime': 'Izoblikovanost površja',
-        'kazalniki': ['VISINA']
+        'kazalniki': ['VISINA', 'NAKLON', 'REKA2']
     },
     'DEMOG': {
         'ime': 'Demografska struktura',
-        'kazalniki': ['INDX_STAR']
+        'kazalniki': ['GOSTOTA', 'INDX_STAR', 'PRIRAST', 'DEL_TUJC']
     },
     'SOCIO': {
         'ime': 'Socialna struktura',
-        'kazalniki': ['STOP_BREZP']
+        'kazalniki': ['URA_BRUTO', 'STOP_BREZP']
     },
     'PRST_RAST': {
         'ime': 'Prst in rastlinstvo',
@@ -56,7 +57,7 @@ SKLOPI = {
     },
     'ZAPOS': {
         'ime': 'Zaposlitvena struktura',
-        'kazalniki': ['STOP_BREZP']
+        'kazalniki': ['STOP_BREZP', 'PODJ']
     },
 
 
@@ -353,6 +354,7 @@ def vrednost_atributa_vse_obcine(atribut): #vrne sortiran seznam vrednosti atrib
         s.append(v[ime_atr.index(atribut)])
     return sorted(s)
 
+
 def id_ime(id): #vrne ime obcine za poljuben id
     idd, imena_obcin, ime_atr, vrednosti = get_layer_data()
     for iddd, ime in zip(idd, imena_obcin):
@@ -593,7 +595,7 @@ def opis(id1, id2, meje=True):
                 })
         else:
             for k, v in val.iteritems():
-                vals = vrednost_atributa_vse_obcine(k)
+                vals = vrednost_atributa_vse_obcine_tup(k)
                 items.append({
                     'id': k,
                     'attribute': IMENA[k].lower(),
@@ -604,9 +606,11 @@ def opis(id1, id2, meje=True):
                     'o2': normal_razl(k, id1, id2)[1],
                     'o2_real': vrednost_atributa(id2, k)[0],
                     'o2_name': id_ime(id2),
-                    'mean': sum(vals) / len(vals),
-                    'min': min(vals),
-                    'max': max(vals),
+                    'mean': sum(zip(*vals)[1]) / len(vals),
+                    'min': min(vals, key=itemgetter(1))[1],
+                    'min_name': id_ime(min(vals, key=itemgetter(1))[0]),
+                    'max': max(vals, key=itemgetter(1))[1],
+                    'max_name': id_ime(max(vals, key=itemgetter(1))[0]),
                 })
 
 
