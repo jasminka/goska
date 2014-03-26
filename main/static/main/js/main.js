@@ -73,15 +73,16 @@ $(document).ready(function () {
             $.each(data.kazalniki, function (index, value) {
                 $.each(value.attributes, function (index, attribute) {
                     if (sklopi[sklop].kazalniki.indexOf(attribute.id) != -1) {
-                        console.log(attribute);
                         var min = attribute.min_name;
-                        if (min.length > 7){
-                            min = attribute.min_name.substring(0,7) + '...'
-                        };
+                        if (min.length > 7) {
+                            min = attribute.min_name.substring(0,7) + '...';
+                        }
+
                         var max = attribute.max_name;
-                        if (max.length > 7){
-                            max = attribute.max_name.substring(0,7) + '...'
-                        };
+                        if (max.length > 7) {
+                            max = attribute.max_name.substring(0,7) + '...';
+                        }
+
                         var data = [
                             [min, attribute.min],
                             ['POVPRECJE', attribute.mean],
@@ -91,9 +92,10 @@ $(document).ready(function () {
                         ];
 
                         var id = group + '-' + counter.toString();
+
                         var a = attribute.attribute;
                         if (a.length > 20) {
-                            a = a.substring(0, 20) + '...'
+                            a = a.substring(0, 20) + '...';
                         }
 
                         //var ticks = ['Min', 'Max', 'Mean', 'Kranjska gora', 'Ljubljana'];
