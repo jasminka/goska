@@ -21,7 +21,7 @@
 <body>
 <div class="container theme-showcase">
 
-    <div class="jumbotron">
+    <div class="jumbotron" style="background-color: #ffffff">
         <h1 >GOSKA</h1><br/>
 
         <p>Te zanima, v kako raznoliki državi živiš? Si se kdaj spraševal, v čem se tvoje domače okolje razlikuje od
@@ -59,87 +59,81 @@
                         {% endfor %}
                     </select>
                 </div>
-                <button id=btnsum type="button" class="btn btn-warning" data-loading-text="Računam..."
+                <button id="btnsum" type="button" class="btn btn-warning" data-loading-text="Računam..."
                         style="width: 100px;">Primerjaj
                 </button>
             </form>
         </div>
     </div>
 
-    <div class="row spacer50">
-        <div class="col-md-12 text-center">
-            <div class="radio-inline">
-              <label>
-                <input type="radio" name="optionsRadios" id="optionsOsnovni" value="osnovni">
-                Osnovni pogled
-              </label>
-            </div>
-            <div class="radio-inline">
-              <label>
-                <input type="radio" name="optionsRadios" id="optionsNapredni" value="napredni" checked>
-                 Pogled po sklopih
-              </label>
-            </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="sum" style="text-align: left; margin-left: 180px; margin-right: 180px; padding-top: 45px; padding-bottom: 10px; font-size: 17px;"></div>
+
+            <div id="opis" style="text-align: left; margin-left: 180px; margin-right: 180px; padding-bottom: 30px;"></div>
         </div>
     </div>
 
-    <div class="panel-group spacer50" id="accordion" >
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a id="sum" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                    </a>
-                </h4>
-            </div>
-            <div id="opis" class="panel-body"></div>
-            <div id="legenda"></div>
-        </div>
-
-        <div id="panelOsnovni" class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    Kazalniki
-                </h4>
-            </div>
-            <div id="kazalniki" class="panel-body"></div>
-        </div>
-
-        <div id="panelSklopi" class="panel panel-default" >
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    Kazalniki po sklopih
-                </h4>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <select id="sklop-1" data-placeholder="Izberi sklop" class="form-control chosen-select" style="width:100%;">
-                            <option value=""></option>
-                            {% for sklop in sklopi %}
-                                <option value="{{ sklop.id }}">{{ sklop.ime }}</option>
-                            {% endfor %}
-                        </select>
-                        <div id="grafi-1"></div>
-                    </div>
-                    <div class="col-md-4">
-                        <select id="sklop-2" data-placeholder="Izberi sklop" class="form-control chosen-select" style="width:100%;">
-                            <option value=""></option>
-                            {% for sklop in sklopi %}
-                                <option value="{{ sklop.id }}">{{ sklop.ime }}</option>
-                            {% endfor %}
-                        </select>
-                        <div id="grafi-2"></div>
-                    </div>
-                    <div class="col-md-4">
-                        <select id="sklop-3" data-placeholder="Izberi sklop" class="form-control chosen-select" style="width:100%;">
-                            <option value=""></option>
-                            {% for sklop in sklopi %}
-                                <option value="{{ sklop.id }}">{{ sklop.ime }}</option>
-                            {% endfor %}
-                        </select>
-                        <div id="grafi-3"></div>
-                    </div>
+    <div id="pogled" class="spacer50">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="radio-inline">
+                  <label>
+                    <input type="radio" name="optionsRadios" id="optionsOsnovni" value="osnovni">
+                    Osnovni pogled
+                  </label>
                 </div>
+                <div class="radio-inline">
+                  <label>
+                    <input type="radio" name="optionsRadios" id="optionsNapredni" value="napredni" checked>
+                     Pogled po sklopih
+                  </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div id="panelOsnovni" class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            Kazalniki
+                        </h4>
+                    </div>
+                    <div id="kazalniki" class="panel-body"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="panelSklopi" class="row">
+            <div class="col-md-4 text-center">
+                <select id="sklop-1" data-placeholder="Izberi sklop" class="form-control chosen-select" style="width:100%;">
+                    <option value=""></option>
+                    {% for sklop in sklopi %}
+                        <option value="{{ sklop.id }}">{{ sklop.ime }}</option>
+                    {% endfor %}
+                </select>
+
+                <div id="grafi-1" ></div>
+
+            </div>
+            <div class="col-md-4 text-center">
+                <select id="sklop-2" data-placeholder="Izberi sklop" class="form-control chosen-select" style="width:100%;">
+                    <option value=""></option>
+                    {% for sklop in sklopi %}
+                        <option value="{{ sklop.id }}">{{ sklop.ime }}</option>
+                    {% endfor %}
+                </select>
+                <div id="grafi-2"></div>
+            </div>
+            <div class="col-md-4 text-center">
+                <select id="sklop-3" data-placeholder="Izberi sklop" class="form-control chosen-select" style="width:100%;">
+                    <option value=""></option>
+                    {% for sklop in sklopi %}
+                        <option value="{{ sklop.id }}">{{ sklop.ime }}</option>
+                    {% endfor %}
+                </select>
+                <div id="grafi-3"></div>
             </div>
         </div>
     </div>

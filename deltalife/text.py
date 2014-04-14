@@ -10,8 +10,31 @@ import layers
 
 life = layers.DLife()
 layer_data = None
-IMENA = {'GOSTOTA': u'GOSTOTA POSELITVE (preb/km2)',
-         'PRIRAST': u'SKUPNI PRIRAST PREBIVALSTVA (na 1000 preb)',
+IMENA = {'GOSTOTA': u'GOSTOTA POSELITVE',
+         'PRIRAST': u'SKUPNI PRIRAST PREB.',
+         'PADA': u'KOLIČINA PADAVIN',
+         'REG_BREZPO': u'BREZPOSELNOST',
+         'URA_BRUTO': u'BRUTO PLAČILO ZA URO DELA',
+         'STOP_BREZP': u'STOP. BREZPOSELNOSTI',
+         'NAKLON': u'NAKLON POVRŠJA',
+         'DEL_TUJC': u'DELEŽ TUJCEV',
+         'TEMP': u'POVP. TEMPERATURA',
+         'AREA': u'POVRŠINA',
+         'INDX_STAR': u'INDEKS STARANJA',
+         'VISINA': u'NADMORSKA VIŠINA',
+         'RUGG': u'RAZGIBANOST_POVRŠJA',
+         'PET1': u'POKRAJINSKOEKOLOŠKA TIPIZACIJA',
+         'PODJ': u'POVPREČNI KAPITAL PODJETJA',
+         'REKA2': u'GOSTOTA REČNE MREŽE',
+         'INDX_DELOV': u'INDEKS DELOVNE MIGRACIJE',
+         'PRST': u'PRST',
+         'RABA': u'RABA TAL'
+
+}
+
+IMENA_LONG = {
+         'GOSTOTA': u'GOSTOTA POSELITVE (preb/km2)',
+         'PRIRAST': u'SKUPNI PRIRAST PREBIVALSTVA (na 1000 prebivalcev)',
          'PADA': u'POVPREČNA LETNA KOLIČINA PADAVIN (mm)',
          'REG_BREZPO': u'REGISTRIRANA BREZPOSELNOST',
          'URA_BRUTO': u'BRUTO PLAČILO ZA URO DELA (€)',
@@ -27,8 +50,23 @@ IMENA = {'GOSTOTA': u'GOSTOTA POSELITVE (preb/km2)',
          'PODJ': u'POVPREČNI KAPITAL PODJETJA',
          'REKA2': u'GOSTOTA REČNE MREŽE (km/km2)',
          'INDX_DELOV': u'INDEKS DELOVNE MIGRACIJE (del. aktivni po občini del. mesta/del. aktivni po občini prebivališča)*100',
+         'PRST': u'PRST',
+         'PRST_EVTR': u'EVTRIČNA',
+         'PRST_DIST': u'DISTRIČNA',
+         'PRST_POKAR': u'POKARBONATNA',
+         'PRST_RENDZ': u'RENDZINA',
+         'PRST_GLEJ': u'GLEJ, PSEVDOGLEJ',
+         'PRST_OBREC': u'OBREČNA',
+         'PRST_KAMN': u'KAMNIŠČE',
+         'RABA': u'RABA TAL',
+         'gozd': u'GOZD',
+         'vodne': u'VODNE POVRŠINE',
+         'umet': u'UMETNE POVRŠINE',
+         'kmet': u'KMETIJSKE POVRŠINE',
 
 }
+
+
 SKLOPI = {
     'PODNEBJE': {
         'ime': 'Podnebje',
@@ -49,7 +87,7 @@ SKLOPI = {
     },
     'PRST_RAST': {
         'ime': 'Prst in rastlinstvo',
-        'kazalniki': ['']
+        'kazalniki': ['PRST', 'RABA']
     },
     'MIGRACIJE': {
         'ime': 'Migracije',
@@ -92,14 +130,119 @@ MEJE = {
 
 OPIS = [
     {
-        'attribute': 'VISINA',
-        'template': u"Povprečna nadmorska višina v občini {o1} je {feature} kot v občini {o2}. ",
+        'attribute': 'GOSTOTA',
+        'template': u"Občina {o1} je {feature} poseljena kot občina {o2}. ",
+        'template2': u"Obe občini sta približno enako gosto poseljeni. ",
         'features': {
-            (-1000, -30): u"precej nižja",
-            (-45, -15): u"nekoliko nižja",
+            (-1000, -10): u"redkeje",
+            #(-30, -10): u"nekoliko redkeje",
+            (-10, 10): u"približno enako gosto",
+            #(10, 30): u"nekoliko gosteje",
+            (10, 1000): u"bolj gosto",
+        },
+        'choices': {
+            (-1000, -15): u"manjši",
+            (-15, 15): u"skoraj enak",
+            (15, 1000): u"večji"
+        },
+        'group':  u"družbene_značilnosti",
+    },
+    {
+        'attribute': 'INDX_DELOV',
+        'template': u"Razmerje med delovno aktivnimi prebivalci, ki delajo v občini ter tistimi, ki prebivajo v njej je {feature}. ",
+        'template2': u"V obe občini se na delo vozi približno enak delež prebivalcev. ",
+        'features': {
+            (-1000, -10): u"manjše",
+            #(-30, -10): u"nekoliko manjše",
+            (-10, 10): u"približno enako",
+            #(10, 30): u"nekoliko večje",
+            (10, 1000): u"večje",
+        },
+        'choices': {
+            (-1000, -15): u"manjši",
+            (-15, 15): u"skoraj enak",
+            (15, 1000): u"večji"
+        },
+        'group':  u"družbene_značilnosti",
+    },{
+        'attribute': 'URA_BRUTO',
+        'template': u"Plače v občini {o1} so {feature} kot v občini {o2}, ",
+        'template2': u"V obeh občinah so plače približno enako visoke, ",
+        'features': {
+            (-1000, -10): u"nižje",
+            #(-30, -10): u"nekoliko nižje",
+            (-10, 10): u"približno enako visoke",
+            #(10, 30): u"nekoliko višje",
+            (10, 1000): u"višje",
+        },
+        'choices': {
+            (-1000, -15): u"manjši",
+            (-15, 15): u"skoraj enak",
+            (15, 1000): u"večji"
+        },
+        'group':  u"družbene_značilnosti",
+    },{
+        'attribute': 'STOP_BREZP',
+        'template': u" {feature} je stopnja brezposelnosti. ",
+        'template2': u"  {} stopnja brezposelnosti. ",
+        'features': {
+            (-1000, -10): u"nižja",
+            #(-30, -10): u"nekoliko nižja",
             (-10, 10): u"približno enaka",
-            (10, 30): u"nekoliko višja",
-            (30, 1000): u"precej višja",
+            #(10, 30): u"nekoliko višja",
+            (10, 1000): u"višja",
+        },
+        'choices': {
+            (-1000, -15): u"manjši",
+            (-15, 15): u"skoraj enak",
+            (15, 1000): u"večji"
+        },
+        'group':  u"družbene_značilnosti",
+    },{
+        'attribute': 'DEL_TUJC',
+        'template': u"Občina {o1} je narodnostno {feature} mešana kot občina {o2}. ",
+        'template2': u" Narodnostna mešanost je v obeh občinah približno enaka. ",
+        'features': {
+            (-1000, -10): u"manj",
+            #(-30, -10): u"nekoliko manj",
+            (-10, 10): u"približno enako",
+            #(10, 30): u"nekoliko bolj",
+            (10, 1000): u"bolj",
+        },
+        'choices': {
+            (-1000, -15): u"manjši",
+            (-15, 15): u"skoraj enak",
+            (15, 1000): u"večji"
+        },
+        'group':  u"družbene_značilnosti",
+    },{
+        'attribute': 'PRIRAST',
+        'template': u"Rast prebivalstva je v občini {o1} {feature}. <br/><br/>",
+        'template2': u"Imata približno enako rast prebivalstva.  <br/><br/>",
+        'features': {
+            (-1000, -10): u"manjša",
+            #(-30, -10): u"nekoliko manjša",
+            (-10, 10): u"približno enaka",
+            #(10, 30): u"nekoliko manjša",
+            (10, 1000): u"večja",
+        },
+        'choices': {
+            (-1000, -15): u"manjši",
+            (-15, 15): u"skoraj enak",
+            (15, 1000): u"večji"
+        },
+        'group':  u"družbene_značilnosti",
+    },
+    {
+        'attribute': 'VISINA',
+        'template': u"Občina {o1} je {feature} ležeča kot občina {o2}  ",
+        'template2': u"Občini ležita na približno enakih nadmorskih višinah.",
+        'features': {
+            (-1000, -10): u"nižje",
+            #(-45, -15): u"nekoliko nižje",
+            (-10, 10): u"približno enako visoko",
+            #(10, 30): u"nekoliko višje",
+            (10, 1000): u"višje",
         },
         'choices': {
             (-1000, -15): u"nižja",
@@ -109,13 +252,14 @@ OPIS = [
         'group': u"naravne_značilnosti",
     }, {
         'attribute': 'NAKLON',
-        'template': u"Občina {o1} ima {feature} povprečni naklon površja. ",
+        'template': u" in ima {feature} strmo površje. ",
+        'template2': u"Sta približno enaki strmi. ",
         'features': {
-            (-1000, -30): u"precej manjši",
-            (-30, -10): u"nekoliko manjši",
-            (-10, 10): u"približno enak",
-            (10, 30): u"nekoliko večji",
-            (30, 1000): u"precej večji",
+            (-1000, -10): u"manj",
+            #(-30, -10): u"nekoliko manj",
+            (-10, 10): u"približno enako",
+            #(10, 30): u"nekoliko bolj",
+            (10, 1000): u"bolj",
         },
         'choices': {
             (-1000, -15): u"manjši",
@@ -128,13 +272,14 @@ OPIS = [
         'template': u"Občina {o1} ima {v1}, občina {o2} pa {v2}. ",
     },{
         'attribute': 'TEMP',
-        'template': u"V občini {o1} je povprečna letna temperatura {feature} kot v občini {o2}. ",
+        'template': u"V občini {o1} je povprečna letna temperatura {feature}, ",
+        'template2': u"Imata približno enako povprečno letno temperaturo ",
         'features': {
-            (-30, -1000): u"veliko nižja",
-            (-10, -30): u"nekoliko nižja",
-            (-10, 10): u"približno enaka",
-            (10, 30): u"nekoliko višja",
-            (30, 1000): u"veliko višja",
+            (10, 1000): u"nižja",
+            #(10, 30): u"nekoliko nižja",
+            (-10, 10): u"približno enako visoka",
+            #(-10, -30): u"nekoliko višja",
+            (-10, -1000): u"višja",
         },
         'choices': {
             (-1000, -15): u"nižja",
@@ -142,15 +287,16 @@ OPIS = [
             (15, 1000): u"višja"
         },
         'group': u"naravne_značilnosti",
-    }, {
+    },{
         'attribute': 'PADA',
-        'template': u"Povprečno prejme {feature} količino padavin kot {o2}. ",
+        'template': u"povprečna količina padavin je {feature}. ",
+        'template2': u"V količini padavin se ne razlikujeta. ",
         'features': {
-            (-30, -1000): u"precej manj",
-            (-30, -10): u"nekoliko manjšo",
-            (-10, 10): u"približno enako",
-            (10, 30): u"nekoliko večjo",
-            (30, 1000): u"precej večjo",
+            (-10, -1000): u"nižja",
+            #(-30, -10): u"nekoliko nižja",
+            (-10, 10): u"približno enaka",
+            #(10, 30): u"nekoliko višja",
+            (10, 1000): u"višja",
         },
         'choices': {
             (-1000, -15): u"manjšo",
@@ -160,13 +306,14 @@ OPIS = [
         'group': u"naravne_značilnosti",
     },{
         'attribute': 'REKA2',
-        'template': u"Občina {o1} ima {feature}. "+ u'<br/>' + u'<br/>',
+        'template': u" Rečna mreža je v občini {o1} {feature}. "+ u'<br/>' + u'<br/>',
+        'template2': u"Gostota rečne mreže je v obeh občinah približno enaka. " u'<br/>' + u'<br/>',
         'features': {
-            (-1000, -30): u"precej manj gosto rečno mrežo",
-            (-30, -10): u"nekoliko manj gosto rečno mrežo",
-            (-10, 10): u"približno enako gosto rečno mrežo",
-            (10, 30): u"nekoliko bolj gosto rečno mrežo",
-            (30, 1000): u"precej bolj gosto rečno mrežo",
+            (-1000, -10): u"redkejša",
+            #(-30, -10): u"nekoliko redkejša",
+            (-10, 10): u"približno enako gosta",
+            #(10, 30): u"nekoliko bolj gosta",
+            (10, 1000): u"bolj gosta",
         },
         'choices': {
             (-1000, -15): u"manjši",
@@ -174,102 +321,6 @@ OPIS = [
             (15, 1000): u"večji"
         },
         'group':  u"naravne_značilnosti",
-    },{
-        'attribute': 'GOSTOTA',
-        'template': u"Gostota prebivalstva je v občini {o1} {feature}. ",
-        'features': {
-            (-1000, -30): u"precej manjša",
-            (-30, -10): u"nekoliko manjša",
-            (-10, 10): u"približno enaka",
-            (10, 30): u"nekoliko večja",
-            (30, 1000): u"precej večja",
-        },
-        'choices': {
-            (-1000, -15): u"manjši",
-            (-15, 15): u"skoraj enak",
-            (15, 1000): u"večji"
-        },
-        'group':  u"družbene_značilnosti",
-    },{
-        'attribute': 'PRIRAST',
-        'template': u"Skupni prirastek prebivalstva je v občini {o1} {feature}. ",
-        'features': {
-            (-1000, -30): u"precej manjši",
-            (-30, -10): u"nekoliko manjši",
-            (-10, 10): u"približno enak",
-            (10, 30): u"nekoliko večji",
-            (30, 1000): u"precej večji",
-        },
-        'choices': {
-            (-1000, -15): u"manjši",
-            (-15, 15): u"skoraj enak",
-            (15, 1000): u"večji"
-        },
-        'group':  u"družbene_značilnosti",
-    },{
-        'attribute': 'DEL_TUJC',
-        'template': u"Delež tujcev je v občini {o1} {feature}. ",
-        'features': {
-            (-1000, -30): u"precej manjši",
-            (-30, -10): u"nekoliko manjši",
-            (-10, 10): u"približno enak",
-            (10, 30): u"nekoliko večji",
-            (30, 1000): u"precej večji",
-        },
-        'choices': {
-            (-1000, -15): u"manjši",
-            (-15, 15): u"skoraj enak",
-            (15, 1000): u"večji"
-        },
-        'group':  u"družbene_značilnosti",
-    },{
-        'attribute': 'STOP_BREZP',
-        'template': u"Stopnja brezposelnosti je v občini {o1} {feature}. ",
-        'features': {
-            (-1000, -30): u"precej manjša",
-            (-30, -10): u"nekoliko manjša",
-            (-10, 10): u"približno enaka",
-            (10, 30): u"nekoliko večja",
-            (30, 1000): u"precej večja",
-        },
-        'choices': {
-            (-1000, -15): u"manjši",
-            (-15, 15): u"skoraj enak",
-            (15, 1000): u"večji"
-        },
-        'group':  u"družbene_značilnosti",
-    },{
-        'attribute': 'URA_BRUTO',
-        'template': u"Bruto plačilo za uro dela je v občini {o1} {feature}. ",
-        'features': {
-            (-1000, -30): u"precej manjše",
-            (-30, -10): u"nekoliko manjše",
-            (-10, 10): u"približno enako",
-            (10, 30): u"nekoliko večje",
-            (30, 1000): u"precej večje",
-        },
-        'choices': {
-            (-1000, -15): u"manjši",
-            (-15, 15): u"skoraj enak",
-            (15, 1000): u"večji"
-        },
-        'group':  u"družbene_značilnosti",
-    },{
-        'attribute': 'INDX_DELOV',
-        'template': u"Indeks delovne migracije je v občini {o1} {feature}. ",
-        'features': {
-            (-1000, -30): u"precej manjši",
-            (-30, -10): u"nekoliko manjši",
-            (-10, 10): u"približno enak",
-            (10, 30): u"nekoliko večji",
-            (30, 1000): u"precej večji",
-        },
-        'choices': {
-            (-1000, -15): u"manjši",
-            (-15, 15): u"skoraj enak",
-            (15, 1000): u"večji"
-        },
-        'group':  u"družbene_značilnosti",
     },
 ]
 
@@ -296,6 +347,92 @@ PODN = {
     21: u'gorsko podnebje višjega gorskega sveta',
     12: u'zaledno submediteransko podnebje',
     11: u'obalno submediteransko podnebje',
+}
+
+OBCINE = {
+    u'CERKLJE NA GORENJSKEM': u'Cerklje na Gorenjskem',
+    u'RNA NA KOROKEM': u'Črna na Koroškem',
+    u'DOBROVA - POLHOV GRADEC': u'Dobrova - Polhov Gradec',
+    u'DOL PRI LJUBLJANI': u'Dol pri Ljubljani',
+    u'GORENJA VAS - POLJANE': u'Gorenja vas - Poljane',
+    u'GORNJI GRAD': u'Gornji Grad',
+    u'GORNJI PETROVCI': u'Gornji Petrovci',
+    u'IVANNA GORICA': u'Ivančna Gorica',
+    u'IZOLA/ISOLA': u'Izola/Isola',
+    u'LOŠKI POTOK': u'Loški Potok',
+    u'MORAVSKE TOPLICE': u'Moravske Toplice',
+    u'MURSKA SOBOTA': u'Murska Sobota',
+    u'NOVA GORICA': u'Nova Gorica',
+    u'RAE - FRAM': u'Rače - Fram',
+    u'RADLJE OB DRAVI': u'Radlje ob Dravi',
+    u'RAVNE NA KOROKEM': u'Ravne ne Koroškem',
+    u'ROGAŠKA SLATINA': u'Rogaka Slatina',
+    u'SLOVENJ GRADEC': u'Slovenj Gradec',
+    u'SLOVENJSKA BISTRICA': u'Slovenska Bistrica',
+    u'SLOVENSKE KONJICE': u'Slovenjske Konjice',
+    u'SVETI JURIJ': u'Sveti Jurij',
+    u'KOFJA LOKA': u'Škofja Loka',
+    u'MARJE PRI JELAH': u'Šmarje pri Jelšah',
+    u'MARTNO OB PAKI': u'Šmartno ob Paki',
+    u'VELIKE LAE': u'Velike Lašče',
+    u'ZAGORJE OB SAVI': u'Zagorje ob Savi',
+    u'HRPELJE - KOZINA': u'Hrpelje - Kozina',
+    u'ILIRSKA BISTRICA': u'Ilirska Bistrica',
+    u'KOPER/CAPODISTRIA': u'Koper/Capodistria',
+    u'KRANJSKA GORA': u'Kranjska Gora',
+    u'LENDAVA/LENDVA': u'Lendava/Lendva',
+    u'MIREN - KOSTANJEVICA': u'Miren - Kostanjevica',
+    u'NOVO MESTO': u'Novo Mesto',
+    u'PIRAN/PIRANO': u'Piran/Pirano',
+    u'BISTRICA OB SOTLI': u'Bistrica ob Sotli',
+    u'DOBROVNIK/DOBRONAK': u'Dobrovnik/Dobronak',
+    u'DOLENJSKE TOPLICE': u'Dolenkse Toplice',
+    u'HOE - SLIVNICA': u'Hoče - Slivnica',
+    u'HODO/HODOS': u'Hodoš/Hodos',
+    u'LOVRENC NA POHORJU': u'Lovrenc na Pohorju',
+    u'MIRNA PE': u'Mirna Peč',
+    u'SELNICA OB DRAVI': u'Selnica ob Dravi',
+    u'EMPETER - VRTOJBA': u'Šempeter - Vrtojba',
+    u'TRNOVSKA VAS': u'Trnovska Vas',
+    u'MIKLAV NA DRAVSKEM POLJU': u'Miklavž na Dravskem polju',
+    u'RIBNICA NA POHORJU': u'Ribnica na Pohorju',
+    u'SVETA ANA': u'Sveta Ana',
+    u'SVETI ANDRA V SLOV. GORICAH': u'Svet Andraž v Slov. goricah',
+    u'VELIKA POLANA': u'Velika Polana',
+    u'MARTNO PRI LITIJI': u'Šmartno pri Litiji',
+    u'SREDIE OB DRAVI': u'Središče ob Dravi',
+    u'SVETA TROJICA V SLOV. GORICAH': u'Sveta Trojica v Slov. goricah',
+    u'SVETI TOMA': u'Svet Tomaž',
+    u'MARJEKE TOPLICE': u'Šmarješke Toplice',
+    u'KOSTANJEVICA NA KRKI': u'Kostanjevica na Krki',
+    u'MOKRONOG - TREBELNO': u'Mokronog - Trebelno',
+    u'RENE - VOGRSKO': u'Renče - Vogrsko',
+    u'LOG - DRAGOMER': u'Log - Dragomer',
+    u'REICA OB SAVINJI': u'Rečica ob Savinji',
+    u'SVETI JURIJ V SLOV. GORICAH': u'Sveti Jurij v Slov. goricah',
+}
+
+MULTI = {
+    u"PRST" : [
+        u'PRST_EVTR',
+        u'PRST_DIST',
+        u'PRST_POKAR',
+        u'PRST_RENDZ',
+        u'PRST_GLEJ',
+        u'PRST_OBREC',
+        u'PRST_KAMN',
+    ],
+    u'RABA' : [
+        u'gozd',
+        u'kmet',
+        u'vodne',
+        u'umet',
+    ],
+}
+
+DELITEV = {
+    u'družbene_značilnosti' : ('PRIRAST', 'DEL_TUJC', 'GOSTOTA', 'INDX_DELOV', 'URA_BRUTO', 'STOP_BREZP'),
+    u'naravne_značilnosti': ('TEMP', 'PADA', 'NAKLON', 'VISINA', 'REKA2', 'PRST', 'RABA'),
 }
 
 def get_layer_data(layer_name='OBCINE'):
@@ -334,6 +471,7 @@ def get_layer_data(layer_name='OBCINE'):
         id.append(int(unicode(attr_vals[0].toPyObject(), layers.ENCODING)))
         vrednosti.append(vals)
 
+
     for col in columns:
         imena_atributov.append(str(unicode(attr_names[col])))
 
@@ -357,9 +495,9 @@ def vrednost_atributa_vse_obcine(atribut): #vrne sortiran seznam vrednosti atrib
 
 def id_ime(id): #vrne ime obcine za poljuben id
     idd, imena_obcin, ime_atr, vrednosti = get_layer_data()
-    for iddd, ime in zip(idd, imena_obcin):
+    for iddd, name in zip(idd, imena_obcin):
         if id == iddd:
-            return ime
+            return name
     return None
 
 def katera_obcina(x, y):
@@ -372,7 +510,7 @@ def vrednost_atributa(id, atribut): # za zeljeno obcino in atribut izpise vredno
     ndx = idd.index(id) #ndx uvedemo, ker id-iji niso shranjeni po vrstnem redu
     for i, ime in enumerate(ime_atr):
         if ime == atribut:
-            return vrednosti[ndx][i], ime_atr[i], imena_obcin[ndx]
+            return vrednosti[ndx][i], ime_atr[i], idd[ndx]
 print vrednost_atributa(12, 'REKA2')
 
 def kako_narazen_delez(atribut, id1,
@@ -419,11 +557,11 @@ def pretvori(ods):
     elif ods == 0:
         odg = u"Ni razlike."
     elif ods > 0 and ods < 15:
-        odg = u"Občini sta si precej podobni."
+        odg = u"Občini sta podobni."
     elif ods >= 15 and ods < 35:
-        odg = u"Občini sta nekoliko različni."
-    elif ods >= 35:
-        odg = u"Občini sta precej različni."
+        odg = u"Občini sta različni."
+    #elif ods >= 35:
+
     return odg
 
 def get_obcine():
@@ -432,6 +570,9 @@ def get_obcine():
     return [{"id": a, "ime": b} for a, b in zip(ids, obcine)]
 
 def lepo_ime(o):
+    if o in OBCINE:
+        return OBCINE[o]
+
     o = o[0].upper() + o[1:].lower()
     if '/' in o:
         o = o[:o.find('/')]
@@ -489,19 +630,18 @@ print normal_razl('REKA2', 065, 061)
 
 def skupna_razlika(id1, id2, meje=True):
     dic_razl = {}
-    dic = {
-        u'družbene_značilnosti' : ('PRIRAST', 'DEL_TUJC', 'GOSTOTA', 'INDX_DELOV', 'URA_BRUTO', 'STOP_BREZP'),
-        u'naravne_značilnosti': ('TEMP', 'PADA', 'NAKLON', 'VISINA', 'REKA2'),
-    }
+    dic = DELITEV
     m = 0
     max_spremenlj = ''
     for skupina, d in dic.iteritems():
         dic_razl[skupina] = {}
         for spremenlj in d:
-            if meje is True:
+            if spremenlj != 'PRST' and meje is True:
                 z = normal_razl_meje(spremenlj, id1, id2)[2]
-            else:
+            elif spremenlj != 'PRST'and meje is not True:
                 z = normal_razl(spremenlj, id1, id2)[2]
+            else:
+                break
             dic_razl[skupina][spremenlj] = z
             if z > m:
                 m = z
@@ -555,6 +695,36 @@ def attr_mean_brez(atr):
 
     return norm_mean
 
+def multi_bar(id1, id2, dict):
+    type = {}
+
+    count1 = 0
+    count2 = 0
+
+    for a in dict:
+        ids = {}
+        print a
+        val1, atr_name1, mun1 = vrednost_atributa(id1, a)
+        val2, atr_name2, mun2 = vrednost_atributa(id2, a)
+        ids[mun1] = val1
+        print "val", val1
+        count1 += val1 if val1 else 0
+        count2 += val2 if val2 else 0
+        ids[mun2] = val2
+        a = IMENA_LONG[a]
+        type[a] = ids
+    if count1 < 100:
+        ostalo = {id1: 100 - count1}
+    else:
+        ostalo = {id1: 0}
+    type['OSTALO'] = ostalo
+    if count2 < 100:
+        ostalo[id2] = 100 - count2
+    else:
+        ostalo[id2] = 0
+
+    print 'type', type
+    return type
 
 def opis(id1, id2, meje=True):
     if meje is True:
@@ -572,16 +742,15 @@ def opis(id1, id2, meje=True):
             'group': skl,
             'value': dic_skup[sklj],
             'attributes': items,
-            'o1': 20,
-            'o2': 40,
-            'mean': 30,
-        });
+        })
+
         if meje is True:
             for k, v in val.iteritems():
                 minval, maxval = min_max_obcini(k)
                 items.append({
                     'id': k,
                     'attribute': IMENA[k].lower(),
+                    'attribute_long':IMENA_LONG[k].lower(),
                     'value': v,
                     'o1': normal_razl_meje(k, id1, id2)[0],
                     'o1_real': vrednost_atributa(id1, k)[0],
@@ -599,6 +768,7 @@ def opis(id1, id2, meje=True):
                 items.append({
                     'id': k,
                     'attribute': IMENA[k].lower(),
+                    'attribute_long':IMENA_LONG[k].lower(),
                     'value': v,
                     'o1': normal_razl(k, id1, id2)[0],
                     'o1_real': vrednost_atributa(id1, k)[0],
@@ -610,11 +780,25 @@ def opis(id1, id2, meje=True):
                     'min': min(vals, key=itemgetter(1))[1],
                     'min_name': id_ime(min(vals, key=itemgetter(1))[0]),
                     'max': max(vals, key=itemgetter(1))[1],
-                    'max_name': id_ime(max(vals, key=itemgetter(1))[0]),
+                    'max_name': id_ime(max(vals, key=itemgetter(1))[0])
                 })
 
+        for s, v in MULTI.items():
+            if s in DELITEV[sklj]:
+                items.append({
+                    'id': s,
+                    'attribute': IMENA[s].lower(),
+                    'attribute_long':IMENA_LONG[s].lower(),
+                    'multi': multi_bar(id1, id2, v),
+                    'o1': id1,
+                    'o1_name': id_ime(id1),
+                    'o2': id2,
+                    'o2_name': id_ime(id2),
+                    'value': -1
+                })
 
         items.sort(key=itemgetter('value'), reverse=True)
+
     k2.sort(key=itemgetter('value'), reverse=True)
 
 
@@ -627,34 +811,46 @@ def opis(id1, id2, meje=True):
             template = o['template']
             features = o['features']
             group = o['group']
-            #print group
+            template2 = o['template2']
             raz = dic_razl[group][attribute]
             v1 = vrednost_atributa(id1, attribute)
             v2 = vrednost_atributa(id2, attribute)
             if v2 > v1:
                 raz = -raz
             for (fr, to), feature in features.iteritems():
+                #if -10 < raz <= 10:
+                    #opis += template2
+                    #break
+                if attribute == 'INDX_DELOV':
+                    if v1[0] <= 100 and v2[0] <= 100:
+                        template = u'Iz obeh občin se več ljudi, kot imata delovno aktivnih prebivalcev, vozi na delo drugam. '
+                    if v1[0] >= 100 and v2[0] >= 100:
+                        template = u'V obe občini se na delo vozi več ljudi, kot imata delovno aktivnih prebivalcev. '
+                    if v1[0] > 100 and v2[0] < 100:
+                        template = u'V občino {o1} se na delo vozi več ljudi, kot ima delovno aktivnih prebivalcev, v občini {o2} pa je ravno obratno. '
+                    if v1[0] < 100 and v2[0] > 100:
+                        template = u'Iz občine {o2} se več ljudi vozi na delo drugam, kot ima delovno aktivnih prebivalcev.'
+
                 if fr < raz <= to:
+                    opis += template.format(o1=o1, o2=o2, feature=feature, v1=v1[0])
                     break
-            #print attribute, raz,'v', v1, v2
-            opis += template.format(o1=o1, o2=o2, feature=feature, v1=v1[0]) \
                     #+ '[{0}] '.format(raz)
     print 'maax', max_spremenlj
 
-    skloni = {u"družbene značilnosti": u"družbenih značilnosti", u"naravne značilnosti": u"naravnih značilnosti" }
+    skloni = {u"družbene značilnosti": u"družbenogeografskih značilnosti", u"naravne značilnosti": u"naravnogeografskih značilnosti" }
     if max(dic_skup.itervalues()) - min(dic_skup.itervalues()) > 10:
         vec_razl, _ = max(dic_skup.iteritems(), key=itemgetter(1))
         vec_razl = vec_razl.replace("_", " ",).strip()
         vec_razl = u"Največ razlik je na področju {0}. ".format(skloni[vec_razl])
     else:
-        vec_razl = u"Stopnja razlikovanja na naravnogeografskem in družbenogeografskem področju je približno enaka. "
+        vec_razl = u" "
 
     if max_spremenlj in IMENA:
-        max_spremenlj = u"Najbolj se razlikujeta v spremenljivki {0}. ".format(IMENA[max_spremenlj].lower())
+        max_spremenlj = u"Občini se najbolj razlikujeta v spremenljivki {0}.".format(IMENA_LONG[max_spremenlj].lower().split(" (")[0])
     else:
         max_spremenlj = ""
 
-    povzetek = u"{0} {1}".format(pretvori(vsota), vec_razl)
+    povzetek = u"{0} {1}".format( vec_razl, max_spremenlj)
     print 'k', k2
     return povzetek, opis, k2 # k2 je seznam slovarjev
 
@@ -678,4 +874,3 @@ def min_max_obcini(atr):
         if v <= MEJE[atr][1] and v > maximum:
             maximum = v
     return minimum, maximum
-
