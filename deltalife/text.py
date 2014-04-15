@@ -850,6 +850,8 @@ def opis(id1, id2, meje=True):
     else:
         max_spremenlj = ""
 
+
+
     povzetek = u"{0} {1}".format( vec_razl, max_spremenlj)
     print 'k', k2
     return povzetek, opis, k2 # k2 je seznam slovarjev
