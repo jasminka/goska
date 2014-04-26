@@ -844,7 +844,6 @@ def opis(id1, id2, meje=True):
                 elif fr < raz <= to and group == u"družbene_značilnosti":
                     opisd += template.format(o1=o1, o2=o2, feature=feature, v1=v1[0])
                     break
-    print 'opis', opisn, opisd
 
     skloni = {u"družbene značilnosti": u"družbenogeografskih značilnosti", u"naravne značilnosti": u"naravnogeografskih značilnosti" }
     if max(dic_skup.itervalues()) - min(dic_skup.itervalues()) > 10:
