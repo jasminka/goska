@@ -11,14 +11,14 @@ import layers
 life = layers.DLife()
 layer_data = None
 IMENA = {'GOSTOTA': u'GOSTOTA POSELITVE',
-         'PRIRAST': u'SKUPNI PRIRAST PREB.',
+         'PRIRAST': u'SKUPNI PRIRAST PREBIVALSTVA',
          'PADA': u'KOLIČINA PADAVIN',
          'REG_BREZPO': u'BREZPOSELNOST',
          'URA_BRUTO': u'BRUTO PLAČILO ZA URO DELA',
-         'STOP_BREZP': u'STOP. BREZPOSELNOSTI',
+         'STOP_BREZP': u'STOPNJA BREZPOSELNOSTI',
          'NAKLON': u'NAKLON POVRŠJA',
          'DEL_TUJC': u'DELEŽ TUJCEV',
-         'TEMP': u'POVP. TEMPERATURA',
+         'TEMP': u'POVPREČNA TEMPERATURA',
          'AREA': u'POVRŠINA',
          'INDX_STAR': u'INDEKS STARANJA',
          'VISINA': u'NADMORSKA VIŠINA',
@@ -50,7 +50,7 @@ IMENA_LONG = {
          'PODJ': u'POVPREČNI KAPITAL PODJETJA',
          'REKA2': u'GOSTOTA REČNE MREŽE (km/km2)',
          'INDX_DELOV': u'INDEKS DELOVNE MIGRACIJE (del. aktivni po občini del. mesta/del. aktivni po občini prebivališča)*100',
-         'PRST': u'PRST',
+         'PRST': u'PRST (%)',
          'PRST_EVTR': u'EVTRIČNA',
          'PRST_DIST': u'DISTRIČNA',
          'PRST_POKAR': u'POKARBONATNA',
@@ -58,11 +58,11 @@ IMENA_LONG = {
          'PRST_GLEJ': u'GLEJ, PSEVDOGLEJ',
          'PRST_OBREC': u'OBREČNA',
          'PRST_KAMN': u'KAMNIŠČE',
-         'RABA': u'RABA TAL',
-         'gozd': u'GOZD',
-         'vodne': u'VODNE POVRŠINE',
-         'umet': u'UMETNE POVRŠINE',
-         'kmet': u'KMETIJSKE POVRŠINE',
+         'RABA': u'RABA TAL (%)',
+         'RABA_GOZD': u'GOZD',
+         'RABA_VODN': u'VODNE POVRŠINE',
+         'RABA_UMET': u'UMETNE POVRŠINE',
+         'RABA_KMET': u'KMETIJSKE POVRŠINE',
 
 }
 
@@ -86,7 +86,7 @@ SKLOPI = {
         'kazalniki': ['URA_BRUTO', 'STOP_BREZP']
     },
     'PRST_RAST': {
-        'ime': 'Prst in rastlinstvo',
+        'ime': 'Prst in raba tal',
         'kazalniki': ['PRST', 'RABA']
     },
     'MIGRACIJE': {
@@ -306,7 +306,7 @@ OPIS = [
         'group': u"naravne_značilnosti",
     },{
         'attribute': 'REKA2',
-        'template': u" Rečna mreža je v občini {o1} {feature}. "+ u'<br/>' + u'<br/>',
+        'template': u" Rečna mreža je v občini {o1} {feature}. ",
         'template2': u"Gostota rečne mreže je v obeh občinah približno enaka. " u'<br/>' + u'<br/>',
         'features': {
             (-1000, -10): u"redkejša",
@@ -423,10 +423,10 @@ MULTI = {
         u'PRST_KAMN',
     ],
     u'RABA' : [
-        u'gozd',
-        u'kmet',
-        u'vodne',
-        u'umet',
+        u'RABA_GOZD',
+        u'RABA_KMET',
+        u'RABA_VODN',
+        u'RABA_UMET',
     ],
 }
 
@@ -706,20 +706,24 @@ def multi_bar(id1, id2, dict):
         print a
         val1, atr_name1, mun1 = vrednost_atributa(id1, a)
         val2, atr_name2, mun2 = vrednost_atributa(id2, a)
+        if not val1:
+            val1 = 0
+        if not val2:
+            val2 = 0
         ids[mun1] = val1
         print "val", val1
-        count1 += val1 if val1 else 0
-        count2 += val2 if val2 else 0
+        count1 += val1
+        count2 += val2
         ids[mun2] = val2
         a = IMENA_LONG[a]
         type[a] = ids
     if count1 < 100:
-        ostalo = {id1: 100 - count1}
+        ostalo = {id1: 100.0 - count1}
     else:
         ostalo = {id1: 0}
     type['OSTALO'] = ostalo
     if count2 < 100:
-        ostalo[id2] = 100 - count2
+        ostalo[id2] = 100.0 - count2
     else:
         ostalo[id2] = 0
 
@@ -804,7 +808,8 @@ def opis(id1, id2, meje=True):
 
     o1 = lepo_ime(id_ime(id1))
     o2 = lepo_ime(id_ime(id2))
-    opis = u''
+    opisn = u''
+    opisd = u''
     for o in OPIS:
         if 'features' in o:
             attribute = o['attribute']
@@ -831,11 +836,15 @@ def opis(id1, id2, meje=True):
                     if v1[0] < 100 and v2[0] > 100:
                         template = u'Iz občine {o2} se več ljudi vozi na delo drugam, kot ima delovno aktivnih prebivalcev.'
 
-                if fr < raz <= to:
-                    opis += template.format(o1=o1, o2=o2, feature=feature, v1=v1[0])
+                if fr < raz <= to and group == u"naravne_značilnosti":
+                    opisn += template.format(o1=o1, o2=o2, feature=feature, v1=v1[0])
                     break
                     #+ '[{0}] '.format(raz)
-    print 'maax', max_spremenlj
+
+                elif fr < raz <= to and group == u"družbene_značilnosti":
+                    opisd += template.format(o1=o1, o2=o2, feature=feature, v1=v1[0])
+                    break
+    print 'opis', opisn, opisd
 
     skloni = {u"družbene značilnosti": u"družbenogeografskih značilnosti", u"naravne značilnosti": u"naravnogeografskih značilnosti" }
     if max(dic_skup.itervalues()) - min(dic_skup.itervalues()) > 10:
@@ -851,10 +860,12 @@ def opis(id1, id2, meje=True):
         max_spremenlj = ""
 
 
-
-    povzetek = u"{0} {1}".format( vec_razl, max_spremenlj)
+    title1 = u"Največja razlika: "
+    title2 = u"Naravnogeografsko področje: "
+    title3 = u"Družbenogeografko področje: "
+    povzetek = u"{0} {1}".format(vec_razl, max_spremenlj)
     print 'k', k2
-    return povzetek, opis, k2 # k2 je seznam slovarjev
+    return title1, title2, title3, povzetek, opisn, opisd, k2 # k2 je seznam slovarjev
 
 def vse_razlike(limit=None):
     id, imena_obcin, ime_atr, vrednosti = get_layer_data()

@@ -11,6 +11,9 @@ QGIS_DATA = os.path.join(PATH, "..", "..", "data", "obcine")
 if 'QGIS_DATA' in os.environ:
     QGIS_DATA = os.environ['QGIS_DATA']
 
+
+print os.path.join(PATH, "..", "..", "data", "obcine")
+
 print "loading {0}".format(os.path.join(QGIS_DATA, "Obcine.shp"))
 VECTOR_LAYERS = {
     "OBCINE": os.path.join(QGIS_DATA, "Obcine.shp"),

@@ -72,29 +72,6 @@ $(document).ready(function () {
 
         if (sklop && sklopi) {
 
-
-//            if (sklopi[sklop].kazalniki == 'PRST') {
-//                var grafs2 = true;
-//                var dats = [];
-//                var keys = [];
-//                for (var key1 in data.kazalniki[0].attributes[0].multi['PRST']) {
-//                    var subdats =[];
-//                    var subkeys = [];
-//                    for (var key2 in data.kazalniki[0].attributes[0].multi['PRST'][key1]){
-//                        var ids = key2;
-//                        var vals = data.kazalniki[0].attributes[0].multi['PRST'][key1][key2];
-//                        subkeys.push(ids);
-//                        subdats.push(vals);
-//                    }
-//                    dats.push(subdats);
-//                    keys.push(subkeys);
-//
-//
-//                }
-//
-//            }
-
-
             $.each(data.kazalniki, function (index, value) {
                 $.each(value.attributes, function (index, attribute) {
                     var _data;
@@ -107,7 +84,7 @@ $(document).ready(function () {
                             _data = [];
                             series = [];
                             var l = {};
-                            console.log(attribute.o1_name);
+
                             if (attribute.o1_name.length > 15) {
                                 name1 = attribute.o1_name.substring(0,15) + '...';
                             } else {
@@ -118,10 +95,11 @@ $(document).ready(function () {
                             } else {
                                 name2 = attribute.o2_name
                             }
-                            console.log(attribute.o2_name);
+
                             var ticks = [name1, name2];
                             stackSeries = true;
                             $.each(attribute.multi, function (attr, val) {
+                                console.log(attr, val);
                                 series.push({
                                     'label': attr
                                 });
@@ -141,11 +119,13 @@ $(document).ready(function () {
 
                                 _data.push(sez_atr);
 
+
                            });
                             var min = 0;
                             var max = 100;
-                            var formatString = '%3d%'
-                            console.log(series);
+                            var formatString = '%3d%';
+
+
 
 
                         } else {
@@ -250,7 +230,7 @@ $(document).ready(function () {
                             legend: {
                                 show: stackSeries,
                                 location: 'e',
-                                placement: 'outside',
+                                placement: 'outside'
 
 
                             },
@@ -284,8 +264,12 @@ $(document).ready(function () {
     });
 
     function refresh() {
+        $("#title1").html(data.title1);
         $("#sum").html(data.povzetek);
-        $("#opis").html(data.opis);
+        $("#title2").html(data.title2);
+        $("#opisn").html(data.opisn);
+        $("#title3").html(data.title3);
+        $("#opisd").html(data.opisd);
 
         var kazalniki = "",
             d = [[]],
@@ -296,24 +280,30 @@ $(document).ready(function () {
             $("#panelOsnovni").show();
             $.each(data.kazalniki, function (index, value) {
                 kazalniki += "<div class=\"row\">";
-                kazalniki += "<div style=\"text-align:right; font-size:10px\">RAZLIKA<br/>(100%: največja razlika med občinami) <br/></div>";
+                kazalniki += "<div style=\"text-align:right; font-size:10px\">RAZLIKA<br/>(100%: največja razlika med občinami) <br/><br/></div>";
                 kazalniki += "<div class=\"col-md-4\"><strong>{0}</strong></div>".format(value['group'])
                 kazalniki += "<div id=\"chart_{0}\" class=\"col-md-6\"></div>".format(counter);
                 kazalniki += "<div class=\"col-md-2 text-right\"><strong>{0}</strong> %</div><br/><br/>".format(Math.round(value['value']));
                 kazalniki += "</div>";
-                counter += 1;
+                counter += 1
 
                 $.each(value.attributes, function (index, value) {
                     kazalniki += "<div class=\"row\">";
                     kazalniki += "<div class=\"col-md-4\">{0}</div>".format(value['attribute']);
                     kazalniki += "<div id=\"chart_{0}\" class=\"col-md-6\"></div>".format(counter);
+                    console.log("in, val",value);
+                    if (value.hasOwnProperty('multi')){
+                        kazalniki += "<div class=\"col-md-2 text-right\">{0}</div>".format("/");
+                    } else {
                     kazalniki += "<div class=\"col-md-2 text-right\">{0} %</div>".format(Math.round(value['value']));
+                    }
                     kazalniki += "</div>";
+
                     d[0].push({axis: value['attribute'], value: value['value']});
                     counter += 1;
                 });
             });
-            $("#kazalniki").html(kazalniki); //Funkcija, ki razredu #kazalniki dodaš vsebino
+            $("#kazalniki").html(kazalniki); //Funkcija, ki razredu #kazalniki doda vsebino
 
             //d[0].sort(function(a, b) {return b.value - a.value});
             //RadarChart.draw("#chart", d);
@@ -357,50 +347,173 @@ $(document).ready(function () {
             }
 
             function barChart(c, value) {
-                var plot = $.jqplot('chart_' + c, [[[value.o2_real, 1]], [[value.o1_real, 2]], [[value.max, 3]], [[value.mean, 4]], [[value.min, 5]]], {
-                    seriesDefaults: {
-                        renderer:$.jqplot.BarRenderer,
-                        // Show point labels to the right ('e'ast) of each bar.
-                        // edgeTolerance of -15 allows labels flow outside the grid
-                        // up to 15 pixels.  If they flow out more than that, they
-                        // will be hidden.
-                        pointLabels: { show: true, location: 'e', edgeTolerance: -15 },
-                        // Here's where we tell the chart it is oriented horizontally.
-                        rendererOptions: {
-                            barDirection: 'horizontal'
-                        },
-                        shadow: false
-                    },
-                    axes: {
-                        yaxis: {
-                            renderer: $.jqplot.CategoryAxisRenderer,
-                            tickOptions:{
-                                showGridline: false,
-                                mark: false
-                            },
-                            ticks: [value.o2_name, value.o1_name, 'MAX', 'POVPREČJE', 'MIN']
+
+                    var ticks;
+                    var _data;
+                    var series;
+                    var name1;
+                    var name2;
+                    var namemax;
+                    var namemin;
+                    var stackSeries = false;
+                    if (value.hasOwnProperty('multi')) {
+                        _data = [];
+                        series = [];
+                        var l = {};
+
+                        if (value.o1_name.length > 15) {
+                            name1 = value.o1_name.substring(0,12) + '...';
+                        } else {
+                            name1 = value.o1_name
                         }
-                    },
-                    grid:{
-                        shadow: false,
-                        borderWidth: 0,
-                        background: '#ffffff'
+                        if (value.o2_name.length > 15) {
+                            name2 = value.o2_name.substring(0,12) + '...';
+                            console.log(name2);
+                        } else {
+                            name2 = value.o2_name
+                        }
+
+                        var ticks = [name1, name2];
+                        console.log(ticks);
+                        stackSeries = true;
+                        $.each(value.multi, function (attr, val) {
+                            series.push({
+                                'label': attr
+                            });
+
+
+                            var sez_atr = [];
+
+
+                            $.each(val, function (idObcine, vrednostAtrib) {
+                                console.log(idObcine, val);
+                                if (idObcine == value.o1) {
+                                    sez_atr[0] = vrednostAtrib;
+                                } else {
+                                    sez_atr[1] = vrednostAtrib;
+                                }
+
+                            });
+                            console.log("sez_atr", sez_atr);
+
+
+
+                        _data.push(sez_atr);
+
+
+                        });
+                        console.log("_data",_data,  series);
+                        var min = 0;
+                        var max = 100;
+                        var formatString = '%3.f%';
+                        var width = 9;
+
+
+
+
+
+                    } else {
+                        _data = [[[value.o2_real, 1]], [[value.o1_real, 2]], [[value.max, 3]], [[value.mean, 4]], [[value.min, 5]]];
+                        if (value.o1_name.length > 15) {
+                            name1 = value.o1_name.substring(0,12) + '...';
+                        } else {
+                            name1 = value.o1_name
+                        }
+                        if (value.o2_name.length > 15) {
+                            name2 = value.o2_name.substring(0,12) + '...';
+                        } else {
+                            name2 = value.o2_name
+                        if (value.max_name.length > 10) {
+                            namemax = value.max_name.substring(0,7) + '...';
+                        } else {
+                            namemax = value.max_name}
+                        }
+                        if (value.min_name.length > 10) {
+                            namemin = value.min_name.substring(0,7) + '...';
+                        } else {
+                            namemin = value.min_name
+                        }
+
+                        ticks = [name2, name1, 'max: ' + namemax, 'POVPREČJE OBČIN', 'min: ' + namemin];
+
+                        min = null;
+                        max = null;
+
                     }
-                });
+
+                        var plot = $.jqplot('chart_' + c , _data, {
+                            stackSeries: stackSeries,
+                            series: series,
+                            seriesDefaults: {
+                                renderer:$.jqplot.BarRenderer,
+                                // Show point labels to the right ('e'ast) of each bar.
+                                // edgeTolerance of -15 allows labels flow outside the grid
+                                // up to 15 pixels.  If they flow out more than that, they
+                                // will be hidden.
+                                pointLabels: { show: true, location: 'e', edgeTolerance: -15, hideZeros: true },
+                                // Here's where we tell the chart it is oriented horizontally.
+                                rendererOptions: {
+                                    barDirection: 'horizontal',
+                                    barWidth: width
+
+
+                                },
+                                shadow: false
+
+                            },
+                            axes: {
+                                yaxis: {
+                                    renderer: $.jqplot.CategoryAxisRenderer,
+                                    labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+                                    tickOptions:{
+                                        formatString: formatString,
+                                        showGridline: false,
+                                        mark: false
+                                    },
+                                    ticks: ticks,
+                                    max: max,
+                                    min: min
+                                }
+
+                            },
+                            legend: {
+                                //renderer: $.jqplot.EnhancedLegendRenderer,
+
+                                show: stackSeries,
+                                location: 'e',
+                                placement: 'outside'
+
+                            },
+                            grid:{
+                                shadow: false,
+                                borderWidth: 0,
+                                background: '#ffffff'
+                            }
+                        });
             }
-            counter = 0;
-            $.each(data.kazalniki, function (index, value) {
-                counter += 1;
-                $.each(value.attributes, function (index, value) {
-                    barChart(counter, value);
-                    counter += 1;
-                });
-            });
+
+                    counter = 0;
+                    $.each(data.kazalniki, function (index, value) {
+                        counter += 1;
+
+                        $.each(value.attributes, function (index, value) {
+
+                            barChart(counter, value);
+
+                            counter += 1;
+                        });
+                    });
+
+
         } else {
             $("#panelOsnovni").hide();
             $("#panelSklopi").show();
         }
+
     }
+
+
+
 
     var btnsum = $("#btnsum");
     btnsum.click(function () {
@@ -431,5 +544,11 @@ $(document).ready(function () {
         });
 
         return false;
+
     });
 });
+
+
+
+
+

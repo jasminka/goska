@@ -27,8 +27,8 @@
         <p>Te zanima, v kako raznoliki državi živiš? Si se kdaj spraševal, v čem se tvoje domače okolje razlikuje od
             drugih delov Slovenije?
             Izberi dve občini in začni raziskovati! Pri raziskovanju ti bo pomagal opis razlik med občinama in dva načina grafičnega prikaza.
-            Pri pogledu po sklopih lahko izbereš tri vsebinska področja. Opazuj, kako kazalniki sovplivajo. Napredni prikaz ti bo pokazal
-            kako močno se razlikujeta v posameznih kazalnikih in odgovoril na vprašanje, ali se občini bolj razlikujeta na družbenem ali naravnogeografskem področju.
+            Pri pogledu po sklopih lahko izbereš tri vsebinska področja. Opazuj, kako kazalniki sovplivajo. Napredni prikaz ti bo pokazal,
+            kako močno se občini razlikujeta v posameznih kazalnikih.
 
             </p>
 
@@ -72,9 +72,12 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div id="sum" style="text-align: left; margin-left: 180px; margin-right: 180px; padding-top: 45px; padding-bottom: 10px; font-size: 17px;"></div>
-
-            <div id="opis" style="text-align: left; margin-left: 180px; margin-right: 180px; padding-bottom: 30px;"></div>
+            <div id="title1" style="text-align: left; margin-left: 180px; margin-right: 180px; margin-top: 45px; margin-bottom: 0px;  font-weight: bolder; font-size: 17px;"></div>
+            <div id="sum" style="text-align: left; margin-left: 180px; margin-right: 180px; margin-top: 0px; margin-bottom: 5px; font-size: 17px;"></div>
+            <div id="title2" style="text-align: left; margin-left: 180px; margin-right: 180px; margin-top: 0em; margin-bottom: 0em; font-weight: bolder;"></div>
+            <div id="opisn" style="text-align: left; margin-left: 180px; margin-right: 180px; margin-top: 0em; margin-bottom: 5px;"></div>
+            <div id="title3" style="text-align: left; margin-left: 180px; margin-right: 180px; margin-top: 0em; margin-bottom: 0em; font-weight: bolder;"></div>
+            <div id="opisd" style="text-align: left; margin-left: 180px; margin-right: 180px; margin-top: 0em; margin-bottom: 0em;"></div>
         </div>
     </div>
 
@@ -83,14 +86,14 @@
             <div class="col-md-12 text-center">
                 <div class="radio-inline">
                   <label>
-                    <input type="radio" name="optionsRadios" id="optionsOsnovni" value="osnovni">
-                    Osnovni pogled
+                    <input type="radio" name="optionsRadios" id="optionsNapredni" value="napredni" checked>
+                     Pogled po sklopih
                   </label>
                 </div>
                 <div class="radio-inline">
                   <label>
-                    <input type="radio" name="optionsRadios" id="optionsNapredni" value="napredni" checked>
-                     Pogled po sklopih
+                    <input type="radio" name="optionsRadios" id="optionsOsnovni" value="osnovni">
+                    Pogled po velikosti razlike
                   </label>
                 </div>
             </div>
@@ -99,11 +102,6 @@
         <div class="row">
             <div class="col-md-12">
                 <div id="panelOsnovni" class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            Kazalniki
-                        </h4>
-                    </div>
                     <div id="kazalniki" class="panel-body"></div>
                 </div>
             </div>
@@ -140,6 +138,9 @@
                 <div id="grafi-3"></div>
             </div>
         </div>
+        <div style="padding-top: 20px; font-size: 12px; padding-left: 35px;">
+        min: občina z najnižjo vrednostjo; max: občina z najvišjo vrednostjo; povprečje občin: povprečje vrednosti vseh občin; prst in raba tal prikazujeta odstotne deleže posameznih kategorij
+        </div>
     </div>
 
     <footer class="footer" style="margin-top: 100px;">
@@ -162,6 +163,7 @@
 <script src="{% static 'main/js/jqplot.barRenderer.min.js' %}"></script>
 <script src="{% static 'main/js/jqplot.categoryAxisRenderer.min.js' %}"></script>
 <script src="{% static 'main/js/jqplot.pointLabels.min.js' %}"></script>
+<script src="{% static 'main/js/jqplot.enhancedLegendRenderer.min.js' %}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'main/js/d3.v3.min.js' %}"></script>
