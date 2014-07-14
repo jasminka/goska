@@ -32,7 +32,7 @@ def prim(request):
         return HttpResponse(json.dumps({
             'title1' : title1,
             'title2' : title2,
-            'title3' : title2,
+            'title3' : title3,
             'povzetek' : povzetek,
             'opisn' : opisn,
             'opisd' : opisd,
